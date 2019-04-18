@@ -7,15 +7,17 @@ import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
 import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
-import {readTextFile} from './globals';
+import {readTextFile, parseTxt} from './globals';
 import Mesh from './geometry/Mesh';
 import Texture from './rendering/gl/Texture';
+import { stringify } from 'querystring';
+import { format } from 'url';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
-  shape: 'sphere',
-  resolution: 50,
+  shape: 'wahoo',
+  slice: 0,
 };
 
 let screenQuad: ScreenQuad;
@@ -53,8 +55,8 @@ function main() {
   // Add controls to the gui
   const gui = new DAT.GUI();
 
-  gui.add(controls, 'shape', ['cube', 'sphere']);
-  gui.add(controls, 'resolution', 10, 100).step(10);
+  gui.add(controls, 'shape', ['wahoo', 'sphere']);
+  gui.add(controls, 'slice', 0.0, 10.0).step(1.0);
   gui.add(show, 'add').name('Cut the bread');
 
   // get canvas and webgl context
@@ -93,51 +95,46 @@ function main() {
 
 
   let offsetsArray = [];
-  let col1Array: number[] ; // scale x
-  let col2Array: number[] ; // scale y
-  let col3Array: number[] ; // scale z
-  let col4Array: number[] ; // translation
-  let colorsArray = [];
-  let n = controls.resolution;
   let count: number = 0;
+  let path: string;
+
+  let curSlice = controls.slice;
+
+
   
-  //let raw: string = readTextFile('./src/wahoo.binvox');
+  if(controls.shape == 'wahoo')
+  {
+      path = './src/wahoo.txt';
+  }
+  else if(controls.shape == 'sphere')
+  {
+      path = './src/sphere.txt'
+  }
 
-  // var rawFile = new XMLHttpRequest();
-  //   rawFile.open("GET", './src/wahoo.raw', false);
-  // var reader = new FileReader();
-  // var raw = reader.readAsBinaryString(rawFile);
-
-
-  // let raw = [];
-  // for(var i = -3; i < 4; i++)
-  // {
-  //   for(var j = -3; j < 4; j++)
-  //   {
-  //     for(var k = 0; k < 2; k++)
-  //     {
-  //         raw.push(0);
-  //     }
-  //   }
-  // }
+  offsetsArray = parseTxt(path);
+   
+  var minX = parseFloat(offsetsArray[0]);
+  var maxX = parseFloat(offsetsArray[offsetsArray.length / 3]);
 
 
-  for(let i = -n; i < n + 1; i++) {
-    for(let j = -n ; j < n + 1; j++) {
-      for(let k = -n; k < n; k++)
-      {
+  var cut = (maxX - minX) * 0.1 * curSlice;
+
+  console.log('max is : ' + maxX + ' min is : ' + minX + ' cut is: ' + cut);
+
+  for(let m = 0; m < offsetsArray.length / 3; m++)
+  {
+        let i = parseFloat(offsetsArray[3 * m]);
+        let j = parseFloat(offsetsArray[3 * m + 1]);
+        let k = parseFloat(offsetsArray[3 * m + 2]);
         
-          if(Math.sqrt(Math.abs(i) *  Math.abs(i) + Math.abs(j) * Math.abs(j) + Math.abs(k) *  Math.abs(k)) > n )
-          {
-            continue;
-          }
-          
+        if(i < curSlice * 10.0) continue;
+        //console.log(i + " " + j + " " + k );
         let transform = mat4.create();
         let translate = mat4.create();
         let scale = mat4.create();
 
         var trans = vec3.fromValues(i, j, k);
-        var scalar = vec3.fromValues(0.1, 0.1, 0.1);
+        var scalar = vec3.fromValues(0.05, 0.05, 0.05);
         mat4.fromScaling(scale, scalar);
         mat4.fromTranslation(translate, trans);
 
@@ -164,16 +161,14 @@ function main() {
         pot.transArray4.push(transform[14]);
         pot.transArray4.push(transform[15]);
   
-        pot.colorsArray.push(vec3.length(vec3.fromValues(i, j, k)) / n);
+        pot.colorsArray.push(1.0);
         pot.colorsArray.push(0.0);
-        pot.colorsArray.push(0.0);
+        pot.colorsArray.push(k / 50.0);
         pot.colorsArray.push(1.0); // Alpha channel
 
         count ++;
-      }
-    }
+
   }
-  
   let colors: Float32Array = new Float32Array(pot.colorsArray);
   let col1: Float32Array = new Float32Array(pot.transArray1);
   let col2: Float32Array = new Float32Array(pot.transArray2);
@@ -183,8 +178,6 @@ function main() {
   pot.setInstanceVBOs(col1, col2, col3, col4, colors);
   pot.setNumInstances(count); // grid of "particles"
 
-
-  console.log("count before cut: " + count);
 
   // This function will be called every frame
   function tick() {
@@ -196,8 +189,18 @@ function main() {
 
     renderer.clear();
 
+    var tmpPath
+
+    if(controls.shape == 'wahoo')
+    {
+        tmpPath = './src/wahoo.txt';
+    }
+    else if(controls.shape == 'sphere')
+    {
+        tmpPath = './src/sphere.txt'
+    }
     
-    if(flag == true || n != controls.resolution)
+    if(path != tmpPath)
     {
       pot.colorsArray = [];
       pot.transArray1 = [];
@@ -206,28 +209,26 @@ function main() {
       pot.transArray4 = [];
 
       var count = 0;
-      n = controls.resolution;
+      path = tmpPath;
 
-      for(let i = -n; i < n + 1; i++) {
-        for(let j = -n ; j < n + 1; j++) {
-          for(let k = -n; k < n; k++)
-          {
+      var offsetsArray = parseTxt(path);
+   
+
+      for(let m = 0; m < offsetsArray.length / 3; m++)
+      {
+            let i = parseFloat(offsetsArray[3 * m]);
+            let j = parseFloat(offsetsArray[3 * m + 1]);
+            let k = parseFloat(offsetsArray[3 * m + 2]);
             
-            if(i < 0)
-            {
-              continue;
-            }
-              if(Math.sqrt(Math.abs(i) *  Math.abs(i) + Math.abs(j) * Math.abs(j) + Math.abs(k) *  Math.abs(k)) > n )
-              {
-                continue;
-              }
- 
+            if(i < curSlice * 10.0) continue;
+    
+            //console.log(i + " " + j + " " + k );
             let transform = mat4.create();
             let translate = mat4.create();
             let scale = mat4.create();
     
             var trans = vec3.fromValues(i, j, k);
-            var scalar = vec3.fromValues(0.1, 0.1, 0.1);
+            var scalar = vec3.fromValues(0.05, 0.05, 0.05);
             mat4.fromScaling(scale, scalar);
             mat4.fromTranslation(translate, trans);
     
@@ -254,16 +255,93 @@ function main() {
             pot.transArray4.push(transform[14]);
             pot.transArray4.push(transform[15]);
       
-            pot.colorsArray.push(vec3.length(vec3.fromValues(i, j, k)) / n);
+            pot.colorsArray.push(1.0);
             pot.colorsArray.push(0.0);
-            pot.colorsArray.push(0.0);
+            pot.colorsArray.push(k / 50.0);
             pot.colorsArray.push(1.0); // Alpha channel
     
             count ++;
-          }
-        }
+    
       }
+      let colors: Float32Array = new Float32Array(pot.colorsArray);
+      let col1: Float32Array = new Float32Array(pot.transArray1);
+      let col2: Float32Array = new Float32Array(pot.transArray2);
+      let col3: Float32Array = new Float32Array(pot.transArray3);
+      let col4: Float32Array = new Float32Array(pot.transArray4);
+      //let colors: Float32Array = new Float32Array(potColorsArray);
+      pot.setInstanceVBOs(col1, col2, col3, col4, colors);
+      pot.setNumInstances(count); // grid of "particles"
+    }
+
+
+    if(controls.slice != curSlice)
+    {
+      pot.colorsArray = [];
+      pot.transArray1 = [];
+      pot.transArray2 = [];
+      pot.transArray3 = [];
+      pot.transArray4 = [];
+
+      var count = 0;
+
+      var offsetsArray = parseTxt(path);
+      curSlice = controls.slice;
+
+      var minX = parseFloat(offsetsArray[0]);
+      var maxX = parseFloat(offsetsArray[offsetsArray.length / 3]);
+    
       
+
+      for(let m = 0; m < offsetsArray.length / 3; m++)
+      {
+
+        //if(blockArray[m] == 'true') continue;
+            let i = parseFloat(offsetsArray[3 * m]);
+            let j = parseFloat(offsetsArray[3 * m + 1]);
+            let k = parseFloat(offsetsArray[3 * m + 2]);
+
+            if( i < curSlice * 10.0) continue;
+            //console.log(i + " " + j + " " + k );
+            let transform = mat4.create();
+            let translate = mat4.create();
+            let scale = mat4.create();
+    
+            var trans = vec3.fromValues(i, j, k);
+            var scalar = vec3.fromValues(0.05, 0.05, 0.05);
+            mat4.fromScaling(scale, scalar);
+            mat4.fromTranslation(translate, trans);
+    
+            mat4.multiply(transform, transform, scale);
+            mat4.multiply(transform, transform, translate);
+    
+            pot.transArray1.push(transform[0]);
+            pot.transArray1.push(transform[1]);
+            pot.transArray1.push(transform[2]);
+            pot.transArray1.push(transform[3]);
+    
+            pot.transArray2.push(transform[4]);
+            pot.transArray2.push(transform[5]);
+            pot.transArray2.push(transform[6]);
+            pot.transArray2.push(transform[7]);
+    
+            pot.transArray3.push(transform[8]);
+            pot.transArray3.push(transform[9]);
+            pot.transArray3.push(transform[10]);
+            pot.transArray3.push(transform[11]);
+    
+            pot.transArray4.push(transform[12]);
+            pot.transArray4.push(transform[13]);
+            pot.transArray4.push(transform[14]);
+            pot.transArray4.push(transform[15]);
+      
+            pot.colorsArray.push(1.0);
+            pot.colorsArray.push(0.0);
+            pot.colorsArray.push(k / 50.0);
+            pot.colorsArray.push(1.0); // Alpha channel
+    
+            count ++;
+    
+      }
       let colors: Float32Array = new Float32Array(pot.colorsArray);
       let col1: Float32Array = new Float32Array(pot.transArray1);
       let col2: Float32Array = new Float32Array(pot.transArray2);
@@ -273,11 +351,7 @@ function main() {
       pot.setInstanceVBOs(col1, col2, col3, col4, colors);
       pot.setNumInstances(count); // grid of "particles"
 
-
-      console.log("count after count: " + count);
-
-      flag = false;
-     
+      flag  = false;
 
     }
  

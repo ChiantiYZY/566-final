@@ -30,19 +30,22 @@ export function readTextFile(file: string): string
 }
 
 
-// export function readRawFile(file: string): string
-// {
-//     var xhr = new XMLHttpRequest();
-//     xhr.open('GET', file, true);
-//     xhr.responseType = ''; // this will accept the response as an ArrayBuffer
-//     var words = file.; 
- 
-//         words = xhr.responseText;
+export function parseTxt(file: string): any 
+{
+  let raw: string = readTextFile(file);
 
-//     xhr.send();
+  var lineArray = raw.split('\n');
+  var offsetsArray = [];
 
-//     return words;
-// }
+  for (var i = 0; i < lineArray.length; i++) {
+    var tmpArray = lineArray[i].split(/[ ,]+/);
+    offsetsArray.push(tmpArray[0]);
+    offsetsArray.push(tmpArray[1]);
+    offsetsArray.push(tmpArray[2]);
+  }
+
+  return offsetsArray;
+}
 
 
 
