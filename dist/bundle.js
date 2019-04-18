@@ -6105,6 +6105,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__ = __webpack_require__(67);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__geometry_Mesh__ = __webpack_require__(68);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__rendering_gl_Texture__ = __webpack_require__(70);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Bread__ = __webpack_require__(71);
+
 
 
 
@@ -6127,6 +6129,7 @@ let pot;
 let time = 0.0;
 let texture2D;
 let texture3D;
+let bread;
 function loadScene() {
     screenQuad = new __WEBPACK_IMPORTED_MODULE_3__geometry_ScreenQuad__["a" /* default */]();
     screenQuad.create();
@@ -6170,74 +6173,28 @@ function main() {
     //gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
     gl.enable(gl.DEPTH_TEST);
     const instancedShader = new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["b" /* default */]([
-        new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.VERTEX_SHADER, __webpack_require__(71)),
-        new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.FRAGMENT_SHADER, __webpack_require__(72)),
+        new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.VERTEX_SHADER, __webpack_require__(72)),
+        new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.FRAGMENT_SHADER, __webpack_require__(73)),
     ]);
     const flat = new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["b" /* default */]([
-        new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.VERTEX_SHADER, __webpack_require__(73)),
-        new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.FRAGMENT_SHADER, __webpack_require__(74)),
+        new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.VERTEX_SHADER, __webpack_require__(74)),
+        new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.FRAGMENT_SHADER, __webpack_require__(75)),
     ]);
+    bread = new __WEBPACK_IMPORTED_MODULE_10__Bread__["a" /* default */]();
     let offsetsArray = [];
     let count = 0;
     let path;
+    let path_b;
     let curSlice = controls.slice;
     if (controls.shape == 'wahoo') {
         path = './src/wahoo.txt';
+        path_b = './src/wahoo_b.txt';
     }
     else if (controls.shape == 'sphere') {
         path = './src/sphere.txt';
     }
-    offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_6__globals__["b" /* parseTxt */])(path);
-    var minX = parseFloat(offsetsArray[0]);
-    var maxX = parseFloat(offsetsArray[offsetsArray.length / 3]);
-    var cut = (maxX - minX) * 0.1 * curSlice;
-    console.log('max is : ' + maxX + ' min is : ' + minX + ' cut is: ' + cut);
-    for (let m = 0; m < offsetsArray.length / 3; m++) {
-        let i = parseFloat(offsetsArray[3 * m]);
-        let j = parseFloat(offsetsArray[3 * m + 1]);
-        let k = parseFloat(offsetsArray[3 * m + 2]);
-        if (i < curSlice * 10.0)
-            continue;
-        //console.log(i + " " + j + " " + k );
-        let transform = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-        let translate = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-        let scale = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-        var trans = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(i, j, k);
-        var scalar = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0.05, 0.05, 0.05);
-        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromScaling(scale, scalar);
-        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromTranslation(translate, trans);
-        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, scale);
-        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, translate);
-        pot.transArray1.push(transform[0]);
-        pot.transArray1.push(transform[1]);
-        pot.transArray1.push(transform[2]);
-        pot.transArray1.push(transform[3]);
-        pot.transArray2.push(transform[4]);
-        pot.transArray2.push(transform[5]);
-        pot.transArray2.push(transform[6]);
-        pot.transArray2.push(transform[7]);
-        pot.transArray3.push(transform[8]);
-        pot.transArray3.push(transform[9]);
-        pot.transArray3.push(transform[10]);
-        pot.transArray3.push(transform[11]);
-        pot.transArray4.push(transform[12]);
-        pot.transArray4.push(transform[13]);
-        pot.transArray4.push(transform[14]);
-        pot.transArray4.push(transform[15]);
-        pot.colorsArray.push(1.0);
-        pot.colorsArray.push(0.0);
-        pot.colorsArray.push(k / 50.0);
-        pot.colorsArray.push(1.0); // Alpha channel
-        count++;
-    }
-    let colors = new Float32Array(pot.colorsArray);
-    let col1 = new Float32Array(pot.transArray1);
-    let col2 = new Float32Array(pot.transArray2);
-    let col3 = new Float32Array(pot.transArray3);
-    let col4 = new Float32Array(pot.transArray4);
-    //let colors: Float32Array = new Float32Array(potColorsArray);
-    pot.setInstanceVBOs(col1, col2, col3, col4, colors);
-    pot.setNumInstances(count); // grid of "particles"
+    var disArray = bread.calDistance(path, path_b);
+    pot = bread.drawBread(path, controls.slice, pot, disArray);
     // This function will be called every frame
     function tick() {
         camera.update();
@@ -6253,121 +6210,10 @@ function main() {
         else if (controls.shape == 'sphere') {
             tmpPath = './src/sphere.txt';
         }
-        if (path != tmpPath) {
-            pot.colorsArray = [];
-            pot.transArray1 = [];
-            pot.transArray2 = [];
-            pot.transArray3 = [];
-            pot.transArray4 = [];
-            var count = 0;
+        if (path != tmpPath || controls.slice != curSlice) {
             path = tmpPath;
-            var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_6__globals__["b" /* parseTxt */])(path);
-            for (let m = 0; m < offsetsArray.length / 3; m++) {
-                let i = parseFloat(offsetsArray[3 * m]);
-                let j = parseFloat(offsetsArray[3 * m + 1]);
-                let k = parseFloat(offsetsArray[3 * m + 2]);
-                if (i < curSlice * 10.0)
-                    continue;
-                //console.log(i + " " + j + " " + k );
-                let transform = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-                let translate = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-                let scale = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-                var trans = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(i, j, k);
-                var scalar = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0.05, 0.05, 0.05);
-                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromScaling(scale, scalar);
-                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromTranslation(translate, trans);
-                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, scale);
-                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, translate);
-                pot.transArray1.push(transform[0]);
-                pot.transArray1.push(transform[1]);
-                pot.transArray1.push(transform[2]);
-                pot.transArray1.push(transform[3]);
-                pot.transArray2.push(transform[4]);
-                pot.transArray2.push(transform[5]);
-                pot.transArray2.push(transform[6]);
-                pot.transArray2.push(transform[7]);
-                pot.transArray3.push(transform[8]);
-                pot.transArray3.push(transform[9]);
-                pot.transArray3.push(transform[10]);
-                pot.transArray3.push(transform[11]);
-                pot.transArray4.push(transform[12]);
-                pot.transArray4.push(transform[13]);
-                pot.transArray4.push(transform[14]);
-                pot.transArray4.push(transform[15]);
-                pot.colorsArray.push(1.0);
-                pot.colorsArray.push(0.0);
-                pot.colorsArray.push(k / 50.0);
-                pot.colorsArray.push(1.0); // Alpha channel
-                count++;
-            }
-            let colors = new Float32Array(pot.colorsArray);
-            let col1 = new Float32Array(pot.transArray1);
-            let col2 = new Float32Array(pot.transArray2);
-            let col3 = new Float32Array(pot.transArray3);
-            let col4 = new Float32Array(pot.transArray4);
-            //let colors: Float32Array = new Float32Array(potColorsArray);
-            pot.setInstanceVBOs(col1, col2, col3, col4, colors);
-            pot.setNumInstances(count); // grid of "particles"
-        }
-        if (controls.slice != curSlice) {
-            pot.colorsArray = [];
-            pot.transArray1 = [];
-            pot.transArray2 = [];
-            pot.transArray3 = [];
-            pot.transArray4 = [];
-            var count = 0;
-            var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_6__globals__["b" /* parseTxt */])(path);
             curSlice = controls.slice;
-            var minX = parseFloat(offsetsArray[0]);
-            var maxX = parseFloat(offsetsArray[offsetsArray.length / 3]);
-            for (let m = 0; m < offsetsArray.length / 3; m++) {
-                //if(blockArray[m] == 'true') continue;
-                let i = parseFloat(offsetsArray[3 * m]);
-                let j = parseFloat(offsetsArray[3 * m + 1]);
-                let k = parseFloat(offsetsArray[3 * m + 2]);
-                if (i < curSlice * 10.0)
-                    continue;
-                //console.log(i + " " + j + " " + k );
-                let transform = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-                let translate = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-                let scale = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-                var trans = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(i, j, k);
-                var scalar = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0.05, 0.05, 0.05);
-                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromScaling(scale, scalar);
-                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromTranslation(translate, trans);
-                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, scale);
-                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, translate);
-                pot.transArray1.push(transform[0]);
-                pot.transArray1.push(transform[1]);
-                pot.transArray1.push(transform[2]);
-                pot.transArray1.push(transform[3]);
-                pot.transArray2.push(transform[4]);
-                pot.transArray2.push(transform[5]);
-                pot.transArray2.push(transform[6]);
-                pot.transArray2.push(transform[7]);
-                pot.transArray3.push(transform[8]);
-                pot.transArray3.push(transform[9]);
-                pot.transArray3.push(transform[10]);
-                pot.transArray3.push(transform[11]);
-                pot.transArray4.push(transform[12]);
-                pot.transArray4.push(transform[13]);
-                pot.transArray4.push(transform[14]);
-                pot.transArray4.push(transform[15]);
-                pot.colorsArray.push(1.0);
-                pot.colorsArray.push(0.0);
-                pot.colorsArray.push(k / 50.0);
-                pot.colorsArray.push(1.0); // Alpha channel
-                count++;
-            }
-            let colors = new Float32Array(pot.colorsArray);
-            let col1 = new Float32Array(pot.transArray1);
-            let col2 = new Float32Array(pot.transArray2);
-            let col3 = new Float32Array(pot.transArray3);
-            let col4 = new Float32Array(pot.transArray4);
-            //let colors: Float32Array = new Float32Array(potColorsArray);
-            pot.setInstanceVBOs(col1, col2, col3, col4, colors);
-            pot.setNumInstances(count); // grid of "particles"
-            flag = false;
+            pot = bread.drawBread(path, curSlice, pot, disArray);
         }
         renderer.render(camera, instancedShader, [pot]);
         renderer.render(camera, flat, [screenQuad]);
@@ -17009,24 +16855,119 @@ class Texture {
 
 /***/ }),
 /* 71 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = "#version 300 es\n\nuniform mat4 u_ViewProj;\nuniform float u_Time;\n\nuniform mat3 u_CameraAxes; // Used for rendering particles as billboards (quads that are always looking at the camera)\n// gl_Position = center + vs_Pos.x * camRight + vs_Pos.y * camUp;\n\nin vec4 vs_Pos; // Non-instanced; each particle is the same quad drawn in a different place\nin vec4 vs_Nor; // Non-instanced, and presently unused\nin vec4 vs_Col; // An instanced rendering attribute; each particle instance has a different color\n// in vec3 vs_Translate; // Another instance rendering attribute used to position each quad instance in the scene\n in vec4 vs_Transform1;\n  in vec4 vs_Transform2;\n   in vec4 vs_Transform3;\n    in vec4 vs_Transform4;\nin vec2 vs_UV; // Non-instanced, and presently unused in main(). Feel free to use it for your meshes.\n\nout vec4 fs_Col;\nout vec4 fs_Pos;\nout vec2 fs_UV;\n//out vec4 fs_Rot;\n\n\n\n\nvoid main()\n{\n    fs_Col = vs_Col;\n    fs_Pos = vs_Pos;\n    fs_UV = vs_UV;\n    // fs_Rot = abs(vs_Rotate);\n\n    // vec3 offset = vs_Translate;\n    // vec4 rotate = (vs_Rotate);\n    // //offset.z = (sin((u_Time + offset.x) * 3.14159 * 0.1) + cos((u_Time + offset.y) * 3.14159 * 0.1)) * 1.5;\n\n    mat4 trans = mat4(vs_Transform1, vs_Transform2, vs_Transform3, vs_Transform4);\n    vec4 pos = trans * vs_Pos;\n\n    vec3 color = vec3(0.2314, 0.149, 0.0);\n\n    gl_Position = u_ViewProj * pos;\n\n}\n"
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_gl_matrix__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__globals__ = __webpack_require__(1);
+
+
+class Bread {
+    constructor() {
+    }
+    drawBread(path, curSlice, pot, distArray) {
+        var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* parseTxt */])(path);
+        var count = 0;
+        //var maxDist = distArray.sort()[distArray.length - 1];
+        for (let m = 0; m < offsetsArray.length / 3; m++) {
+            let i = parseFloat(offsetsArray[3 * m]);
+            let j = parseFloat(offsetsArray[3 * m + 1]);
+            let k = parseFloat(offsetsArray[3 * m + 2]);
+            let dist = distArray[m];
+            if (i < curSlice * 10.0)
+                continue;
+            //console.log(i + " " + j + " " + k );
+            let transform = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
+            let translate = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
+            let scale = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
+            var trans = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(i, j, k);
+            var scalar = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0.05, 0.05, 0.05);
+            __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromScaling(scale, scalar);
+            __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromTranslation(translate, trans);
+            __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, scale);
+            __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, translate);
+            pot.transArray1.push(transform[0]);
+            pot.transArray1.push(transform[1]);
+            pot.transArray1.push(transform[2]);
+            pot.transArray1.push(transform[3]);
+            pot.transArray2.push(transform[4]);
+            pot.transArray2.push(transform[5]);
+            pot.transArray2.push(transform[6]);
+            pot.transArray2.push(transform[7]);
+            pot.transArray3.push(transform[8]);
+            pot.transArray3.push(transform[9]);
+            pot.transArray3.push(transform[10]);
+            pot.transArray3.push(transform[11]);
+            pot.transArray4.push(transform[12]);
+            pot.transArray4.push(transform[13]);
+            pot.transArray4.push(transform[14]);
+            pot.transArray4.push(transform[15]);
+            pot.colorsArray.push(1.0);
+            pot.colorsArray.push(0.0);
+            pot.colorsArray.push(dist / 300.0);
+            pot.colorsArray.push(1.0); // Alpha channel
+            count++;
+        }
+        let colors = new Float32Array(pot.colorsArray);
+        let col1 = new Float32Array(pot.transArray1);
+        let col2 = new Float32Array(pot.transArray2);
+        let col3 = new Float32Array(pot.transArray3);
+        let col4 = new Float32Array(pot.transArray4);
+        //let colors: Float32Array = new Float32Array(potColorsArray);
+        pot.setInstanceVBOs(col1, col2, col3, col4, colors);
+        pot.setNumInstances(count); // grid of "particles"
+        return pot;
+    }
+    calDistance(fillPath, boundPath) {
+        var fillArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* parseTxt */])(fillPath);
+        var boundArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* parseTxt */])(boundPath);
+        var DF = [];
+        for (var i = 0; i < fillArray.length / 3; i++) {
+            var minDist = 1000000000.0;
+            for (var j = 0; j < boundArray.length / 3; j++) {
+                var diff = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0, 0, 0);
+                var bound = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(boundArray[j], boundArray[j + 1], boundArray[j + 2]);
+                var fill = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(fillArray[i], fillArray[i + 1], fillArray[i + 2]);
+                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].subtract(diff, bound, fill);
+                //console.log(diff);
+                var length = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].length(diff);
+                console.log(length);
+                //minDist = Math.min(length, minDist);
+                if (length < minDist)
+                    minDist = length;
+                //console.log('minDist' + minDist);
+            }
+            DF.push(minDist);
+        }
+        console.log('DF');
+        console.log(DF);
+        return DF;
+    }
+}
+;
+/* harmony default export */ __webpack_exports__["a"] = (Bread);
+
 
 /***/ }),
 /* 72 */
 /***/ (function(module, exports) {
 
-module.exports = "#version 300 es\nprecision highp float;\nprecision mediump sampler3D;\nuniform mat4 u_ViewProj;\nuniform float u_Time;\nuniform mat3 u_CameraAxes;\nuniform vec2 u_Dimensions;\nuniform sampler2D u_Texture;\nuniform sampler3D u_3DTexture;\nin vec4 fs_Col;\nin vec4 fs_Pos;\nin vec2 fs_UV;\n//in vec4 fs_Rot;\n\nout vec4 out_Col;\n\n\n\nvoid main()\n{\n\nvec4 color1 = vec4(0.7882, 0.4392, 0.0431, 1.0);\nvec4 color2 = vec4(0.9529, 0.8314, 0.502, 1.0);\n   \n   out_Col = mix(color2, color1, fs_Col.b);\n\n   //out_Col = fs_Col;\n}\n"
+module.exports = "#version 300 es\n\nuniform mat4 u_ViewProj;\nuniform float u_Time;\n\nuniform mat3 u_CameraAxes; // Used for rendering particles as billboards (quads that are always looking at the camera)\n// gl_Position = center + vs_Pos.x * camRight + vs_Pos.y * camUp;\n\nin vec4 vs_Pos; // Non-instanced; each particle is the same quad drawn in a different place\nin vec4 vs_Nor; // Non-instanced, and presently unused\nin vec4 vs_Col; // An instanced rendering attribute; each particle instance has a different color\n// in vec3 vs_Translate; // Another instance rendering attribute used to position each quad instance in the scene\n in vec4 vs_Transform1;\n  in vec4 vs_Transform2;\n   in vec4 vs_Transform3;\n    in vec4 vs_Transform4;\nin vec2 vs_UV; // Non-instanced, and presently unused in main(). Feel free to use it for your meshes.\n\nout vec4 fs_Col;\nout vec4 fs_Pos;\nout vec2 fs_UV;\n//out vec4 fs_Rot;\n\n\n\n\nvoid main()\n{\n    fs_Col = vs_Col;\n    fs_Pos = vs_Pos;\n    fs_UV = vs_UV;\n    // fs_Rot = abs(vs_Rotate);\n\n    // vec3 offset = vs_Translate;\n    // vec4 rotate = (vs_Rotate);\n    // //offset.z = (sin((u_Time + offset.x) * 3.14159 * 0.1) + cos((u_Time + offset.y) * 3.14159 * 0.1)) * 1.5;\n\n    mat4 trans = mat4(vs_Transform1, vs_Transform2, vs_Transform3, vs_Transform4);\n    vec4 pos = trans * vs_Pos;\n\n    vec3 color = vec3(0.2314, 0.149, 0.0);\n\n    gl_Position = u_ViewProj * pos;\n\n}\n"
 
 /***/ }),
 /* 73 */
 /***/ (function(module, exports) {
 
-module.exports = "#version 300 es\nprecision highp float;\n\n// The vertex shader used to render the background of the scene\n\nin vec4 vs_Pos;\nout vec2 fs_Pos;\n\nvoid main() {\n  fs_Pos = vs_Pos.xy;\n  gl_Position = vs_Pos;\n}\n"
+module.exports = "#version 300 es\nprecision highp float;\nprecision mediump sampler3D;\nuniform mat4 u_ViewProj;\nuniform float u_Time;\nuniform mat3 u_CameraAxes;\nuniform vec2 u_Dimensions;\nuniform sampler2D u_Texture;\nuniform sampler3D u_3DTexture;\nin vec4 fs_Col;\nin vec4 fs_Pos;\nin vec2 fs_UV;\n//in vec4 fs_Rot;\n\nout vec4 out_Col;\n\n\n\nvoid main()\n{\n\nvec4 color1 = vec4(0.7882, 0.4392, 0.0431, 1.0);\nvec4 color2 = vec4(0.9529, 0.8314, 0.502, 1.0);\n   \n   out_Col = mix(color2, color1, fs_Col.b);\n\n   //out_Col = fs_Col;\n}\n"
 
 /***/ }),
 /* 74 */
+/***/ (function(module, exports) {
+
+module.exports = "#version 300 es\nprecision highp float;\n\n// The vertex shader used to render the background of the scene\n\nin vec4 vs_Pos;\nout vec2 fs_Pos;\n\nvoid main() {\n  fs_Pos = vs_Pos.xy;\n  gl_Position = vs_Pos;\n}\n"
+
+/***/ }),
+/* 75 */
 /***/ (function(module, exports) {
 
 module.exports = "#version 300 es\nprecision highp float;\n\nuniform vec3 u_Eye, u_Ref, u_Up;\nuniform vec2 u_Dimensions;\nuniform float u_Time;\n\nin vec2 fs_Pos;\nout vec4 out_Col;\n\n/**\n * Noise functions\n */\n\n\nconst mat2 m = mat2( 0.80,  0.60, -0.60,  0.80 );\n\nfloat noise( in vec2 x )\n{\n\treturn sin(1.5*x.x)*sin(1.5*x.y);\n}\n\nfloat fbm4( vec2 p )\n{\n    float f = 0.0;\n    f += 0.5000*noise( p ); p = m*p*2.02;\n    f += 0.2500*noise( p ); p = m*p*2.03;\n    f += 0.1250*noise( p ); p = m*p*2.01;\n    f += 0.0625*noise( p );\n    return f/0.9375;\n}\n\nfloat fbm6( vec2 p )\n{\n    float f = 0.0;\n    f += 0.500000*(0.5+0.5*noise( p )); p = m*p*2.02;\n    f += 0.250000*(0.5+0.5*noise( p )); p = m*p*2.03;\n    f += 0.125000*(0.5+0.5*noise( p )); p = m*p*2.01;\n    f += 0.062500*(0.5+0.5*noise( p )); p = m*p*2.04;\n    f += 0.031250*(0.5+0.5*noise( p )); p = m*p*2.01;\n    f += 0.015625*(0.5+0.5*noise( p ));\n    return f/0.96875;\n}\n\nfloat func( vec2 q, out vec4 ron )\n{\n    float ql = length( q );\n    q.x += 0.05*sin(0.01*u_Time+ql*4.1);\n    q.y += 0.05*sin(0.01*u_Time+ql*4.3);\n    q *= 0.5;\n\n\tvec2 o = vec2(0.0);\n    o.x = 0.5 + 0.5*fbm4( vec2(2.0*q          )  );\n    o.y = 0.5 + 0.5*fbm4( vec2(2.0*q+vec2(5.2))  );\n\n\tfloat ol = length( o );\n    o.x += 0.02*sin(0.01*u_Time+ol)/ol;\n    o.y += 0.02*sin(0.01*u_Time+ol)/ol;\n\n    vec2 n;\n    n.x = fbm6( vec2(4.0*o+vec2(9.2))  );\n    n.y = fbm6( vec2(4.0*o+vec2(5.7))  );\n\n    vec2 p = 4.0*q + 4.0*n;\n\n    float f = 0.5 + 0.5*fbm4( p );\n\n    f = mix( f, f*f*f*3.5, f*abs(n.x) );\n\n    float g = 0.5 + 0.5*sin(4.0*p.x)*sin(4.0*p.y);\n    f *= 1.0-0.5*pow( g, 8.0 );\n\n\tron = vec4( o, n );\n\t\n    return f;\n}\n\n\nvec3 doMagic(vec2 p)\n{\n\tvec2 q = p*0.6;\n\n    vec4 on = vec4(0.0);\n    float f = func(q, on);\n\n\tvec3 col = vec3(0.0);\n    col = mix( vec3(0.0196, 0.5804, 0.1608), vec3(0.0235, 0.2588, 0.4784), f );\n    col = mix( col, vec3(0.1922, 0.0039, 0.1098), dot(on.zw,on.zw) );\n    col = mix( col, vec3(0.502, 0.0118, 0.2157), 0.5*on.y*on.y );\n    col = mix( col, vec3(0.0,0.2,0.4), 0.5*smoothstep(1.2,1.3,abs(on.z)+abs(on.w)) );\n    col = clamp( col*f*2.0, 0.0, 1.0 );\n\treturn 1.1*col*col;\n\n}\n\nfloat rand(vec2 uv) {\n    const highp float a = 12.9898;\n    const highp float b = 78.233;\n    const highp float c = 43758.5453;\n    highp float dt = dot(uv, vec2(a, b));\n    highp float sn = mod(dt, 3.1415);\n    return fract(sin(sn) * c);\n}\n\nvoid draw_stars(inout vec4 color, vec2 uv) {\n    float t = sin(u_Time * 0.1 * rand(-uv)) * 0.5 + 0.5;\n    //color += step(0.99, stars) * t;\n    color += smoothstep(0.99, 1.0, rand(uv)) * t;\n}\n\n\n\nvoid main() {\n\n  vec2 dim = vec2(400.0, 400.0);\n    vec2 p = (-dim.xy+200.0*vec2(fs_Pos))/dim.y;\n\n\n    //p = (-u_Dimensions.xy+2.0*vec2(fs_Pos));\n\n    \n    vec2 uv = vec2(noise(fs_Pos)) / dim.xy;\n    vec2 p1 = vec2(400.0/ 400.0, 1.0);\n    p1 = vec2(0.0, 1.0);\n    vec3 color1 = doMagic(p);\n    out_Col = vec4(color1 * 1.1, 1.0 );\n\n    out_Col = vec4(0.9882, 0.8667, 0.4706, 1.0);\n    //draw_stars(out_Col, uv);\n\n    //out_Col = vec4(p1, p1);\n\n    //out_Col = (1.0 - distance * 0.4) * (vec4(getMountainColor(), 1.0) + vec4(pinkClouds * 0.3, 0.4) + (starColor * 0.9));\n\t\treturn;\n}"
