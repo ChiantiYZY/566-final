@@ -15,6 +15,7 @@ import Texture from './rendering/gl/Texture';
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
   shape: 'sphere',
+  resolution: 50,
 };
 
 let screenQuad: ScreenQuad;
@@ -53,6 +54,7 @@ function main() {
   const gui = new DAT.GUI();
 
   gui.add(controls, 'shape', ['cube', 'sphere']);
+  gui.add(controls, 'resolution', 10, 100).step(10);
   gui.add(show, 'add').name('Cut the bread');
 
   // get canvas and webgl context
@@ -96,7 +98,7 @@ function main() {
   let col3Array: number[] ; // scale z
   let col4Array: number[] ; // translation
   let colorsArray = [];
-  let n: number = 10;
+  let n = controls.resolution;
   let count: number = 0;
   
   //let raw: string = readTextFile('./src/wahoo.binvox');
@@ -183,10 +185,6 @@ function main() {
 
 
   console.log("count before cut: " + count);
- 
-  //instancedShader.bindTexToUnit(instancedShader.unifSampler1, texture2D, 0);
-  //instancedShader.bind3DTexToUnit(instancedShader.unifSampler2, texture3D, 1);
-
 
   // This function will be called every frame
   function tick() {
@@ -199,7 +197,7 @@ function main() {
     renderer.clear();
 
     
-    if(flag == true)
+    if(flag == true || n != controls.resolution)
     {
       pot.colorsArray = [];
       pot.transArray1 = [];
@@ -208,6 +206,7 @@ function main() {
       pot.transArray4 = [];
 
       var count = 0;
+      n = controls.resolution;
 
       for(let i = -n; i < n + 1; i++) {
         for(let j = -n ; j < n + 1; j++) {

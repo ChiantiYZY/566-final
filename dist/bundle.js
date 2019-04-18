@@ -6117,6 +6117,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
     shape: 'sphere',
+    resolution: 50,
 };
 let screenQuad;
 let pot;
@@ -6145,6 +6146,7 @@ function main() {
     // Add controls to the gui
     const gui = new __WEBPACK_IMPORTED_MODULE_2_dat_gui__["GUI"]();
     gui.add(controls, 'shape', ['cube', 'sphere']);
+    gui.add(controls, 'resolution', 10, 100).step(10);
     gui.add(show, 'add').name('Cut the bread');
     // get canvas and webgl context
     const canvas = document.getElementById('canvas');
@@ -6178,7 +6180,7 @@ function main() {
     let col3Array; // scale z
     let col4Array; // translation
     let colorsArray = [];
-    let n = 10;
+    let n = controls.resolution;
     let count = 0;
     //let raw: string = readTextFile('./src/wahoo.binvox');
     // var rawFile = new XMLHttpRequest();
@@ -6244,8 +6246,6 @@ function main() {
     pot.setInstanceVBOs(col1, col2, col3, col4, colors);
     pot.setNumInstances(count); // grid of "particles"
     console.log("count before cut: " + count);
-    //instancedShader.bindTexToUnit(instancedShader.unifSampler1, texture2D, 0);
-    //instancedShader.bind3DTexToUnit(instancedShader.unifSampler2, texture3D, 1);
     // This function will be called every frame
     function tick() {
         camera.update();
@@ -6254,13 +6254,14 @@ function main() {
         flat.setTime(time++);
         gl.viewport(0, 0, window.innerWidth, window.innerHeight);
         renderer.clear();
-        if (flag == true) {
+        if (flag == true || n != controls.resolution) {
             pot.colorsArray = [];
             pot.transArray1 = [];
             pot.transArray2 = [];
             pot.transArray3 = [];
             pot.transArray4 = [];
             var count = 0;
+            n = controls.resolution;
             for (let i = -n; i < n + 1; i++) {
                 for (let j = -n; j < n + 1; j++) {
                     for (let k = -n; k < n; k++) {
