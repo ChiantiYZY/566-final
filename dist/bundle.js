@@ -6116,10 +6116,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
-    iteration: 1,
-    angle: 1,
-    color1: [0.2314 * 255, 0.149 * 255, 0.0],
-    color2: [0.9333 * 255, 0.6706 * 255, 0.6706 * 255],
+    shape: 'sphere',
 };
 let screenQuad;
 let pot;
@@ -6147,12 +6144,8 @@ function main() {
     var show = { add: function () { flag = true; } };
     // Add controls to the gui
     const gui = new __WEBPACK_IMPORTED_MODULE_2_dat_gui__["GUI"]();
-    gui.add(controls, 'iteration', 1, 8).step(1);
-    gui.add(controls, 'angle', 0, 2).step(0.1);
-    gui.addColor(controls, 'color1');
-    gui.addColor(controls, 'color2');
-    gui.add(show, 'add').name('Do L-System');
-    //gui.add(Text, 'shape', [ 'pizza', 'chrome', 'hooray' ] );
+    gui.add(controls, 'shape', ['cube', 'sphere']);
+    gui.add(show, 'add').name('Cut the bread');
     // get canvas and webgl context
     const canvas = document.getElementById('canvas');
     const gl = canvas.getContext('webgl2');
@@ -6209,10 +6202,6 @@ function main() {
                 if (Math.sqrt(Math.abs(i) * Math.abs(i) + Math.abs(j) * Math.abs(j) + Math.abs(k) * Math.abs(k)) > n) {
                     continue;
                 }
-                // if(i < 0)
-                // {
-                //   continue;
-                // }
                 let transform = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
                 let translate = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
                 let scale = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
@@ -6238,9 +6227,9 @@ function main() {
                 pot.transArray4.push(transform[13]);
                 pot.transArray4.push(transform[14]);
                 pot.transArray4.push(transform[15]);
-                pot.colorsArray.push(Math.abs(i) / n);
-                pot.colorsArray.push(Math.abs(i) / n);
-                pot.colorsArray.push(Math.abs(i) / n);
+                pot.colorsArray.push(__WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].length(__WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(i, j, k)) / n);
+                pot.colorsArray.push(0.0);
+                pot.colorsArray.push(0.0);
                 pot.colorsArray.push(1.0); // Alpha channel
                 count++;
             }
@@ -6254,6 +6243,7 @@ function main() {
     //let colors: Float32Array = new Float32Array(potColorsArray);
     pot.setInstanceVBOs(col1, col2, col3, col4, colors);
     pot.setNumInstances(count); // grid of "particles"
+    console.log("count before cut: " + count);
     //instancedShader.bindTexToUnit(instancedShader.unifSampler1, texture2D, 0);
     //instancedShader.bind3DTexToUnit(instancedShader.unifSampler2, texture3D, 1);
     // This function will be called every frame
@@ -6264,6 +6254,66 @@ function main() {
         flat.setTime(time++);
         gl.viewport(0, 0, window.innerWidth, window.innerHeight);
         renderer.clear();
+        if (flag == true) {
+            pot.colorsArray = [];
+            pot.transArray1 = [];
+            pot.transArray2 = [];
+            pot.transArray3 = [];
+            pot.transArray4 = [];
+            var count = 0;
+            for (let i = -n; i < n + 1; i++) {
+                for (let j = -n; j < n + 1; j++) {
+                    for (let k = -n; k < n; k++) {
+                        if (i < 0) {
+                            continue;
+                        }
+                        if (Math.sqrt(Math.abs(i) * Math.abs(i) + Math.abs(j) * Math.abs(j) + Math.abs(k) * Math.abs(k)) > n) {
+                            continue;
+                        }
+                        let transform = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
+                        let translate = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
+                        let scale = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
+                        var trans = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(i, j, k);
+                        var scalar = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0.1, 0.1, 0.1);
+                        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromScaling(scale, scalar);
+                        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromTranslation(translate, trans);
+                        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, scale);
+                        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, translate);
+                        pot.transArray1.push(transform[0]);
+                        pot.transArray1.push(transform[1]);
+                        pot.transArray1.push(transform[2]);
+                        pot.transArray1.push(transform[3]);
+                        pot.transArray2.push(transform[4]);
+                        pot.transArray2.push(transform[5]);
+                        pot.transArray2.push(transform[6]);
+                        pot.transArray2.push(transform[7]);
+                        pot.transArray3.push(transform[8]);
+                        pot.transArray3.push(transform[9]);
+                        pot.transArray3.push(transform[10]);
+                        pot.transArray3.push(transform[11]);
+                        pot.transArray4.push(transform[12]);
+                        pot.transArray4.push(transform[13]);
+                        pot.transArray4.push(transform[14]);
+                        pot.transArray4.push(transform[15]);
+                        pot.colorsArray.push(__WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].length(__WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(i, j, k)) / n);
+                        pot.colorsArray.push(0.0);
+                        pot.colorsArray.push(0.0);
+                        pot.colorsArray.push(1.0); // Alpha channel
+                        count++;
+                    }
+                }
+            }
+            let colors = new Float32Array(pot.colorsArray);
+            let col1 = new Float32Array(pot.transArray1);
+            let col2 = new Float32Array(pot.transArray2);
+            let col3 = new Float32Array(pot.transArray3);
+            let col4 = new Float32Array(pot.transArray4);
+            //let colors: Float32Array = new Float32Array(potColorsArray);
+            pot.setInstanceVBOs(col1, col2, col3, col4, colors);
+            pot.setNumInstances(count); // grid of "particles"
+            console.log("count after count: " + count);
+            flag = false;
+        }
         renderer.render(camera, instancedShader, [pot]);
         renderer.render(camera, flat, [screenQuad]);
         //renderer.render(camera, instancedShader, [petal]);
@@ -16912,7 +16962,7 @@ module.exports = "#version 300 es\n\nuniform mat4 u_ViewProj;\nuniform float u_T
 /* 72 */
 /***/ (function(module, exports) {
 
-module.exports = "#version 300 es\nprecision highp float;\nprecision mediump sampler3D;\nuniform mat4 u_ViewProj;\nuniform float u_Time;\nuniform mat3 u_CameraAxes;\nuniform vec2 u_Dimensions;\nuniform sampler2D u_Texture;\nuniform sampler3D u_3DTexture;\nin vec4 fs_Col;\nin vec4 fs_Pos;\nin vec2 fs_UV;\n//in vec4 fs_Rot;\n\nout vec4 out_Col;\n\n\n\nvoid main()\n{\n    //vec4 color = vec4(0.4863, 0.2784, 0.0392, 1.0);\n\n//     vec4 color3D = texture(u_3DTexture, fs_Pos.xyz);\n\n//    float slice = color3D.r;\n//    if(slice == 1.0)\n//    {\n//        color = texture(u_Texture, fs_UV);\n//    }\n//    else\n//    {\n//        color = vec4(0.8863, 0.1451, 0.1451, 1.0);\n//    }\n\n\nvec4 color1 = vec4(0.7882, 0.4392, 0.0431, 1.0);\nvec4 color2 = vec4(0.9333, 0.7569, 0.4235, 1.0);\n   \n   out_Col = mix(color2, color1, fs_Col.r);\n}\n"
+module.exports = "#version 300 es\nprecision highp float;\nprecision mediump sampler3D;\nuniform mat4 u_ViewProj;\nuniform float u_Time;\nuniform mat3 u_CameraAxes;\nuniform vec2 u_Dimensions;\nuniform sampler2D u_Texture;\nuniform sampler3D u_3DTexture;\nin vec4 fs_Col;\nin vec4 fs_Pos;\nin vec2 fs_UV;\n//in vec4 fs_Rot;\n\nout vec4 out_Col;\n\n\n\nvoid main()\n{\n\nvec4 color1 = vec4(0.7882, 0.4392, 0.0431, 1.0);\nvec4 color2 = vec4(0.9529, 0.8314, 0.502, 1.0);\n   \n   out_Col = mix(color2, color1, fs_Col.r);\n}\n"
 
 /***/ }),
 /* 73 */

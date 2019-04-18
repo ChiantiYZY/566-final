@@ -1,4 +1,4 @@
-import {vec3, mat4} from 'gl-matrix';
+import {vec3, mat4, vec2} from 'gl-matrix';
 import * as Stats from 'stats-js';
 import * as DAT from 'dat-gui';
 import Square from './geometry/Square';
@@ -14,10 +14,7 @@ import Texture from './rendering/gl/Texture';
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
-  iteration: 1,
-  angle: 1,
-  color1: [0.2314 * 255, 0.149 * 255, 0.0],
-  color2: [0.9333 * 255, 0.6706 * 255, 0.6706 * 255],
+  shape: 'sphere',
 };
 
 let screenQuad: ScreenQuad;
@@ -55,12 +52,8 @@ function main() {
   // Add controls to the gui
   const gui = new DAT.GUI();
 
-  gui.add(controls, 'iteration', 1, 8).step(1);
-  gui.add(controls, 'angle', 0, 2).step(0.1);
-  gui.addColor(controls, 'color1');
-  gui.addColor(controls, 'color2');
-  gui.add(show, 'add').name('Do L-System');
-  //gui.add(Text, 'shape', [ 'pizza', 'chrome', 'hooray' ] );
+  gui.add(controls, 'shape', ['cube', 'sphere']);
+  gui.add(show, 'add').name('Cut the bread');
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -136,11 +129,6 @@ function main() {
           {
             continue;
           }
-
-          // if(i < 0)
-          // {
-          //   continue;
-          // }
           
         let transform = mat4.create();
         let translate = mat4.create();
@@ -174,9 +162,9 @@ function main() {
         pot.transArray4.push(transform[14]);
         pot.transArray4.push(transform[15]);
   
-        pot.colorsArray.push(Math.abs(i) / n);
-        pot.colorsArray.push(Math.abs(i) / n);
-        pot.colorsArray.push(Math.abs(i) / n);
+        pot.colorsArray.push(vec3.length(vec3.fromValues(i, j, k)) / n);
+        pot.colorsArray.push(0.0);
+        pot.colorsArray.push(0.0);
         pot.colorsArray.push(1.0); // Alpha channel
 
         count ++;
@@ -192,6 +180,9 @@ function main() {
   //let colors: Float32Array = new Float32Array(potColorsArray);
   pot.setInstanceVBOs(col1, col2, col3, col4, colors);
   pot.setNumInstances(count); // grid of "particles"
+
+
+  console.log("count before cut: " + count);
  
   //instancedShader.bindTexToUnit(instancedShader.unifSampler1, texture2D, 0);
   //instancedShader.bind3DTexToUnit(instancedShader.unifSampler2, texture3D, 1);
@@ -206,6 +197,90 @@ function main() {
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
 
     renderer.clear();
+
+    
+    if(flag == true)
+    {
+      pot.colorsArray = [];
+      pot.transArray1 = [];
+      pot.transArray2 = [];
+      pot.transArray3 = [];
+      pot.transArray4 = [];
+
+      var count = 0;
+
+      for(let i = -n; i < n + 1; i++) {
+        for(let j = -n ; j < n + 1; j++) {
+          for(let k = -n; k < n; k++)
+          {
+            
+            if(i < 0)
+            {
+              continue;
+            }
+              if(Math.sqrt(Math.abs(i) *  Math.abs(i) + Math.abs(j) * Math.abs(j) + Math.abs(k) *  Math.abs(k)) > n )
+              {
+                continue;
+              }
+ 
+            let transform = mat4.create();
+            let translate = mat4.create();
+            let scale = mat4.create();
+    
+            var trans = vec3.fromValues(i, j, k);
+            var scalar = vec3.fromValues(0.1, 0.1, 0.1);
+            mat4.fromScaling(scale, scalar);
+            mat4.fromTranslation(translate, trans);
+    
+            mat4.multiply(transform, transform, scale);
+            mat4.multiply(transform, transform, translate);
+    
+            pot.transArray1.push(transform[0]);
+            pot.transArray1.push(transform[1]);
+            pot.transArray1.push(transform[2]);
+            pot.transArray1.push(transform[3]);
+    
+            pot.transArray2.push(transform[4]);
+            pot.transArray2.push(transform[5]);
+            pot.transArray2.push(transform[6]);
+            pot.transArray2.push(transform[7]);
+    
+            pot.transArray3.push(transform[8]);
+            pot.transArray3.push(transform[9]);
+            pot.transArray3.push(transform[10]);
+            pot.transArray3.push(transform[11]);
+    
+            pot.transArray4.push(transform[12]);
+            pot.transArray4.push(transform[13]);
+            pot.transArray4.push(transform[14]);
+            pot.transArray4.push(transform[15]);
+      
+            pot.colorsArray.push(vec3.length(vec3.fromValues(i, j, k)) / n);
+            pot.colorsArray.push(0.0);
+            pot.colorsArray.push(0.0);
+            pot.colorsArray.push(1.0); // Alpha channel
+    
+            count ++;
+          }
+        }
+      }
+      
+      let colors: Float32Array = new Float32Array(pot.colorsArray);
+      let col1: Float32Array = new Float32Array(pot.transArray1);
+      let col2: Float32Array = new Float32Array(pot.transArray2);
+      let col3: Float32Array = new Float32Array(pot.transArray3);
+      let col4: Float32Array = new Float32Array(pot.transArray4);
+      //let colors: Float32Array = new Float32Array(potColorsArray);
+      pot.setInstanceVBOs(col1, col2, col3, col4, colors);
+      pot.setNumInstances(count); // grid of "particles"
+
+
+      console.log("count after count: " + count);
+
+      flag = false;
+     
+
+    }
  
     renderer.render(camera, instancedShader, [pot]);
 
