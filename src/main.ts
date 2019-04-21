@@ -113,7 +113,8 @@ function main() {
   }
   else if(controls.shape == 'sphere')
   {
-      path = './src/sphere.txt'
+      path = './src/sphere.txt';
+      path_b = './src/sphere_b.txt'
   }
 
   var disArray = bread.calDistance(path, path_b);
@@ -133,22 +134,32 @@ function main() {
     renderer.clear();
 
     var tmpPath;
+    var tmpPath_b;
 
     if(controls.shape == 'wahoo')
     {
         tmpPath = './src/wahoo.txt';
+        tmpPath_b = './src/wahoo_b.txt';
     }
     else if(controls.shape == 'sphere')
     {
-        tmpPath = './src/sphere.txt'
+        tmpPath = './src/sphere.txt';
+        tmpPath_b = './src/sphere_b.txt'
     }
     
-    if(path != tmpPath || controls.slice != curSlice)
+    if(path != tmpPath) 
     {
        path = tmpPath;
-       curSlice = controls.slice;
+
+       disArray = bread.calDistance(tmpPath, tmpPath_b);
 
        pot = bread.drawBread(path, curSlice, pot, disArray);
+    }
+
+    if(controls.slice != curSlice)
+    {
+        curSlice = controls.slice;
+        pot = bread.drawBread(path, curSlice, pot, disArray);
     }
 
  

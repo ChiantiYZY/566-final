@@ -10,13 +10,19 @@ class Bread {
     constructor() {
     }
 
-    drawBread(path: string, curSlice: number, pot: Mesh, distArray: Array<any>) : Mesh
+    drawBread(fillpath: string, curSlice: number, pot: Mesh, distArray: Array<any>) : Mesh
     {
-        var offsetsArray = parseTxt(path);
+        pot.colorsArray = [];
+        pot.transArray1 = [];
+        pot.transArray2 = [];
+        pot.transArray3 = [];
+        pot.transArray4 = [];
+
+        var offsetsArray = parseTxt(fillpath);
 
         var count:number = 0;
 
-        //var maxDist = distArray.sort()[distArray.length - 1];
+        var maxDist = Math.max.apply(null, distArray);
 
         for (let m = 0; m < offsetsArray.length / 3; m++) {
             let i = parseFloat(offsetsArray[3 * m]);
@@ -25,7 +31,7 @@ class Bread {
 
             let dist = distArray[m];
 
-            if (i < curSlice * 10.0) continue;
+            if (i < curSlice * 5.0) continue;
             //console.log(i + " " + j + " " + k );
             let transform = mat4.create();
             let translate = mat4.create();
@@ -61,7 +67,7 @@ class Bread {
 
             pot.colorsArray.push(1.0);
             pot.colorsArray.push(0.0);
-            pot.colorsArray.push(dist / 300.0);
+            pot.colorsArray.push(dist / maxDist);
             pot.colorsArray.push(1.0); // Alpha channel
 
             count++;
@@ -94,18 +100,14 @@ class Bread {
                 var bound = vec3.fromValues(boundArray[j], boundArray[j + 1], boundArray[j + 2]);
                 var fill = vec3.fromValues(fillArray[i], fillArray[i + 1], fillArray[i + 2]);
                 vec3.subtract(diff, bound, fill);
-                //console.log(diff);
                 var length = vec3.length(diff);
-                console.log(length);
-                //minDist = Math.min(length, minDist);
                 if(length < minDist) minDist = length;
-                //console.log('minDist' + minDist);
             }
             DF.push(minDist);
         }
 
-        console.log('DF');
-        console.log(DF);
+        //console.log('DF');
+       // console.log(DF);
         return DF;
     }
 

@@ -6192,6 +6192,7 @@ function main() {
     }
     else if (controls.shape == 'sphere') {
         path = './src/sphere.txt';
+        path_b = './src/sphere_b.txt';
     }
     var disArray = bread.calDistance(path, path_b);
     pot = bread.drawBread(path, controls.slice, pot, disArray);
@@ -6204,14 +6205,21 @@ function main() {
         gl.viewport(0, 0, window.innerWidth, window.innerHeight);
         renderer.clear();
         var tmpPath;
+        var tmpPath_b;
         if (controls.shape == 'wahoo') {
             tmpPath = './src/wahoo.txt';
+            tmpPath_b = './src/wahoo_b.txt';
         }
         else if (controls.shape == 'sphere') {
             tmpPath = './src/sphere.txt';
+            tmpPath_b = './src/sphere_b.txt';
         }
-        if (path != tmpPath || controls.slice != curSlice) {
+        if (path != tmpPath) {
             path = tmpPath;
+            disArray = bread.calDistance(tmpPath, tmpPath_b);
+            pot = bread.drawBread(path, curSlice, pot, disArray);
+        }
+        if (controls.slice != curSlice) {
             curSlice = controls.slice;
             pot = bread.drawBread(path, curSlice, pot, disArray);
         }
@@ -16865,16 +16873,21 @@ class Texture {
 class Bread {
     constructor() {
     }
-    drawBread(path, curSlice, pot, distArray) {
-        var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* parseTxt */])(path);
+    drawBread(fillpath, curSlice, pot, distArray) {
+        pot.colorsArray = [];
+        pot.transArray1 = [];
+        pot.transArray2 = [];
+        pot.transArray3 = [];
+        pot.transArray4 = [];
+        var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* parseTxt */])(fillpath);
         var count = 0;
-        //var maxDist = distArray.sort()[distArray.length - 1];
+        var maxDist = Math.max.apply(null, distArray);
         for (let m = 0; m < offsetsArray.length / 3; m++) {
             let i = parseFloat(offsetsArray[3 * m]);
             let j = parseFloat(offsetsArray[3 * m + 1]);
             let k = parseFloat(offsetsArray[3 * m + 2]);
             let dist = distArray[m];
-            if (i < curSlice * 10.0)
+            if (i < curSlice * 5.0)
                 continue;
             //console.log(i + " " + j + " " + k );
             let transform = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
@@ -16904,7 +16917,7 @@ class Bread {
             pot.transArray4.push(transform[15]);
             pot.colorsArray.push(1.0);
             pot.colorsArray.push(0.0);
-            pot.colorsArray.push(dist / 300.0);
+            pot.colorsArray.push(dist / maxDist);
             pot.colorsArray.push(1.0); // Alpha channel
             count++;
         }
@@ -16929,18 +16942,14 @@ class Bread {
                 var bound = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(boundArray[j], boundArray[j + 1], boundArray[j + 2]);
                 var fill = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(fillArray[i], fillArray[i + 1], fillArray[i + 2]);
                 __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].subtract(diff, bound, fill);
-                //console.log(diff);
                 var length = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].length(diff);
-                console.log(length);
-                //minDist = Math.min(length, minDist);
                 if (length < minDist)
                     minDist = length;
-                //console.log('minDist' + minDist);
             }
             DF.push(minDist);
         }
-        console.log('DF');
-        console.log(DF);
+        //console.log('DF');
+        // console.log(DF);
         return DF;
     }
 }
