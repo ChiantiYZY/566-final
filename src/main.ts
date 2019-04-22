@@ -96,7 +96,7 @@ function main() {
   ]);
 
 
-  bread = new Bread();
+  
 
 
   let offsetsArray = [];
@@ -115,26 +115,30 @@ function main() {
   {
       path = './src/wahoo.txt';
       path_b = './src/wahoo_b.txt';
-      bread.size = wahoo_size;
+      size = wahoo_size;
   }
   else if(controls.shape == 'sphere')
   {
       path = './src/sphere.txt';
       path_b = './src/sphere_b.txt'
-      bread.size = sphere_size;
+      size = sphere_size;
   }
   else if(controls.shape == 'cube')
   {
       path = './src/cube.txt';
       path_b = './src/cube_b.txt'
-      bread.size = cube_size;
+      size = cube_size;
   }
+
+
+  bread = new Bread(size);
  
-  //bread.calDist(path, path_b);
+  bread.calDist(path, path_b);
 
   bread.passTexture(path, path_b);
   //console.log(bread.textArray);
   bread.generateBubble();
+  
   pot = bread.drawBread(path, path_b, controls.slice, pot);
 
   

@@ -6197,7 +6197,6 @@ function main() {
         new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.VERTEX_SHADER, __webpack_require__(74)),
         new __WEBPACK_IMPORTED_MODULE_7__rendering_gl_ShaderProgram__["a" /* Shader */](gl.FRAGMENT_SHADER, __webpack_require__(75)),
     ]);
-    bread = new __WEBPACK_IMPORTED_MODULE_10__Bread__["a" /* default */]();
     let offsetsArray = [];
     let count = 0;
     let path;
@@ -6210,19 +6209,20 @@ function main() {
     if (controls.shape == 'wahoo') {
         path = './src/wahoo.txt';
         path_b = './src/wahoo_b.txt';
-        bread.size = wahoo_size;
+        size = wahoo_size;
     }
     else if (controls.shape == 'sphere') {
         path = './src/sphere.txt';
         path_b = './src/sphere_b.txt';
-        bread.size = sphere_size;
+        size = sphere_size;
     }
     else if (controls.shape == 'cube') {
         path = './src/cube.txt';
         path_b = './src/cube_b.txt';
-        bread.size = cube_size;
+        size = cube_size;
     }
-    //bread.calDist(path, path_b);
+    bread = new __WEBPACK_IMPORTED_MODULE_10__Bread__["a" /* default */](size);
+    bread.calDist(path, path_b);
     bread.passTexture(path, path_b);
     //console.log(bread.textArray);
     bread.generateBubble();
@@ -16912,13 +16912,13 @@ class Texture {
 
 
 class Bread {
-    constructor() {
+    constructor(size) {
         this.distArray = [];
         this.textArray = [];
         this.boundTexture = [];
-        this.distArray = new Array(50 * 50 * 50);
+        this.size = size;
+        this.distArray = new Array(Math.pow(this.size, 3));
         this.distArray.fill(-1);
-        this.size = 50;
     }
     passTexture(fillpath, boundPath) {
         var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["c" /* parseTxt */])(fillpath);

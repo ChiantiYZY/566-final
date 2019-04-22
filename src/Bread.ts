@@ -13,11 +13,12 @@ class Bread {
     boundTexture:Array<any> = [];
     size:number;
 
-    constructor() {
+    constructor(size: number) {
 
-        this.distArray = new Array(50 * 50 * 50);
+        this.size = size;
+        this.distArray = new Array(Math.pow(this.size, 3));
         this.distArray.fill(-1);
-        this.size = 50;
+        
     }
 
     passTexture(fillpath: string, boundPath: string)
