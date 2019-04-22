@@ -19,6 +19,7 @@ in vec2 vs_UV; // Non-instanced, and presently unused in main(). Feel free to us
 out vec4 fs_Col;
 out vec4 fs_Pos;
 out vec2 fs_UV;
+out vec4 fs_Nor;
 //out vec4 fs_Rot;
 
 
@@ -27,16 +28,21 @@ out vec2 fs_UV;
 void main()
 {
     fs_Col = vs_Col;
-    fs_Pos = vs_Pos;
+    //fs_Pos = vs_Pos;
     fs_UV = vs_UV;
+    fs_Nor = vs_Nor;
     // fs_Rot = abs(vs_Rotate);
 
     // vec3 offset = vs_Translate;
     // vec4 rotate = (vs_Rotate);
     // //offset.z = (sin((u_Time + offset.x) * 3.14159 * 0.1) + cos((u_Time + offset.y) * 3.14159 * 0.1)) * 1.5;
 
+    //vec4 pos = vs_Pos - vec4(25.0, 15.0, 15.0, 0.0);
+    vec4 pos = vs_Pos;
     mat4 trans = mat4(vs_Transform1, vs_Transform2, vs_Transform3, vs_Transform4);
-    vec4 pos = trans * vs_Pos;
+    pos = trans * pos;
+
+    fs_Pos = pos;
 
     vec3 color = vec3(0.2314, 0.149, 0.0);
 

@@ -18,7 +18,7 @@ import { cursorTo } from 'readline';
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
-  shape: 'wahoo',
+  shape: 'cube',
   slice: 0,
 };
 
@@ -59,8 +59,8 @@ function main() {
   // Add controls to the gui
   const gui = new DAT.GUI();
 
-  gui.add(controls, 'shape', ['wahoo', 'sphere']);
-  gui.add(controls, 'slice', 0.0, 10.0).step(1.0);
+  gui.add(controls, 'shape', ['wahoo', 'sphere', 'cube']);
+  gui.add(controls, 'slice', 0.0, 100.0).step(1.0);
   gui.add(show, 'add').name('Cut the bread');
 
   // get canvas and webgl context
@@ -106,21 +106,36 @@ function main() {
 
   let curSlice = controls.slice;
   
+  let wahoo_size = 256;
+  let cube_size = 128;
+  let sphere_size = 50;
+  let size = 0;
+
   if(controls.shape == 'wahoo')
   {
       path = './src/wahoo.txt';
       path_b = './src/wahoo_b.txt';
+      bread.size = wahoo_size;
   }
   else if(controls.shape == 'sphere')
   {
       path = './src/sphere.txt';
       path_b = './src/sphere_b.txt'
+      bread.size = sphere_size;
   }
-
-  var disArray = bread.calDistance(path, path_b);
+  else if(controls.shape == 'cube')
+  {
+      path = './src/cube.txt';
+      path_b = './src/cube_b.txt'
+      bread.size = cube_size;
+  }
  
+  //bread.calDist(path, path_b);
 
-  pot = bread.drawBread(path, controls.slice, pot, disArray);
+  bread.passTexture(path, path_b);
+  //console.log(bread.textArray);
+  bread.generateBubble();
+  pot = bread.drawBread(path, path_b, controls.slice, pot);
 
   
   // This function will be called every frame
@@ -140,26 +155,35 @@ function main() {
     {
         tmpPath = './src/wahoo.txt';
         tmpPath_b = './src/wahoo_b.txt';
+        bread.size = wahoo_size;
     }
     else if(controls.shape == 'sphere')
     {
         tmpPath = './src/sphere.txt';
         tmpPath_b = './src/sphere_b.txt'
+        bread.size = sphere_size;
+    }
+    else if(controls.shape == 'cube')
+    {
+        tmpPath = './src/cube.txt';
+        tmpPath_b = './src/cube_b.txt'
+        bread.size = cube_size;
     }
     
     if(path != tmpPath) 
     {
        path = tmpPath;
-
-       disArray = bread.calDistance(tmpPath, tmpPath_b);
-
-       pot = bread.drawBread(path, curSlice, pot, disArray);
+       bread.passTexture(path, tmpPath_b);
+       bread.generateBubble();
+       pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
     }
 
     if(controls.slice != curSlice)
     {
         curSlice = controls.slice;
-        pot = bread.drawBread(path, curSlice, pot, disArray);
+        // bread.passTexture(path, path_b);
+        // bread.textArray = bread.generateBubble();
+        pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
     }
 
  

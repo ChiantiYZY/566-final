@@ -122,10 +122,11 @@ function equals(a, b) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return gl; });
-/* harmony export (immutable) */ __webpack_exports__["d"] = setGL;
-/* harmony export (immutable) */ __webpack_exports__["c"] = readTextFile;
-/* harmony export (immutable) */ __webpack_exports__["b"] = parseTxt;
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return gl; });
+/* harmony export (immutable) */ __webpack_exports__["e"] = setGL;
+/* harmony export (immutable) */ __webpack_exports__["d"] = readTextFile;
+/* harmony export (immutable) */ __webpack_exports__["c"] = parseTxt;
+/* harmony export (immutable) */ __webpack_exports__["a"] = generateTexture;
 /* unused harmony export handleFileSelect */
 var gl;
 function setGL(_gl) {
@@ -139,7 +140,7 @@ function readTextFile(file) {
         if (rawFile.readyState === 4) {
             //console.log("check type get inside");
             if (rawFile.status === 200 || rawFile.status == 0) {
-                console.log("check type get inside");
+                //console.log("check type get inside");
                 var allText = rawFile.responseText;
                 text = allText;
             }
@@ -155,11 +156,27 @@ function parseTxt(file) {
     var offsetsArray = [];
     for (var i = 0; i < lineArray.length; i++) {
         var tmpArray = lineArray[i].split(/[ ,]+/);
-        offsetsArray.push(tmpArray[0]);
-        offsetsArray.push(tmpArray[1]);
-        offsetsArray.push(tmpArray[2]);
+        //console.log(lineArray[i]);
+        offsetsArray.push(parseInt(tmpArray[0]));
+        offsetsArray.push(parseInt(tmpArray[1]));
+        offsetsArray.push(parseInt(tmpArray[2]));
     }
     return offsetsArray;
+}
+function generateTexture(offsetsArray, size) {
+    var length = Math.pow(size, 3);
+    var texture = new Array(length);
+    //  console.log("offetArray: ");
+    //  console.log(offsetsArray);
+    texture.fill(0);
+    for (var i = 0; i < offsetsArray.length / 3; i++) {
+        var x = offsetsArray[3 * i];
+        var y = offsetsArray[3 * i + 1];
+        var z = offsetsArray[3 * i + 2];
+        var index = x + y * size + z * size * size;
+        texture[index] = 1;
+    }
+    return texture;
 }
 function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
@@ -5295,102 +5312,102 @@ class Drawable {
         this.numInstances = 1; // How many instances of this Drawable the shader program should draw
     }
     destory() {
-        __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].deleteBuffer(this.bufIdx);
-        __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].deleteBuffer(this.bufPos);
-        __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].deleteBuffer(this.bufNor);
-        __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].deleteBuffer(this.bufCol);
-        __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].deleteBuffer(this.bufTransform1);
-        __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].deleteBuffer(this.bufTransform2);
-        __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].deleteBuffer(this.bufTransform3);
-        __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].deleteBuffer(this.bufUV);
+        __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].deleteBuffer(this.bufIdx);
+        __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].deleteBuffer(this.bufPos);
+        __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].deleteBuffer(this.bufNor);
+        __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].deleteBuffer(this.bufCol);
+        __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].deleteBuffer(this.bufTransform1);
+        __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].deleteBuffer(this.bufTransform2);
+        __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].deleteBuffer(this.bufTransform3);
+        __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].deleteBuffer(this.bufUV);
     }
     generateIdx() {
         this.idxGenerated = true;
-        this.bufIdx = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createBuffer();
+        this.bufIdx = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createBuffer();
     }
     generatePos() {
         this.posGenerated = true;
-        this.bufPos = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createBuffer();
+        this.bufPos = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createBuffer();
     }
     generateNor() {
         this.norGenerated = true;
-        this.bufNor = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createBuffer();
+        this.bufNor = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createBuffer();
     }
     generateCol() {
         this.colGenerated = true;
-        this.bufCol = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createBuffer();
+        this.bufCol = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createBuffer();
     }
     generateTransform1() {
         this.transformGenerated1 = true;
-        this.bufTransform1 = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createBuffer();
+        this.bufTransform1 = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createBuffer();
     }
     generateTransform2() {
         this.transformGenerated2 = true;
-        this.bufTransform2 = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createBuffer();
+        this.bufTransform2 = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createBuffer();
     }
     generateTransform3() {
         this.transformGenerated3 = true;
-        this.bufTransform3 = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createBuffer();
+        this.bufTransform3 = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createBuffer();
     }
     generateTransform4() {
         this.transformGenerated4 = true;
-        this.bufTransform4 = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createBuffer();
+        this.bufTransform4 = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createBuffer();
     }
     generateUV() {
         this.uvGenerated = true;
-        this.bufUV = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createBuffer();
+        this.bufUV = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createBuffer();
     }
     bindIdx() {
         if (this.idxGenerated) {
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].ELEMENT_ARRAY_BUFFER, this.bufIdx);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].ELEMENT_ARRAY_BUFFER, this.bufIdx);
         }
         return this.idxGenerated;
     }
     bindPos() {
         if (this.posGenerated) {
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].ARRAY_BUFFER, this.bufPos);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].ARRAY_BUFFER, this.bufPos);
         }
         return this.posGenerated;
     }
     bindNor() {
         if (this.norGenerated) {
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].ARRAY_BUFFER, this.bufNor);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].ARRAY_BUFFER, this.bufNor);
         }
         return this.norGenerated;
     }
     bindCol() {
         if (this.colGenerated) {
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].ARRAY_BUFFER, this.bufCol);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].ARRAY_BUFFER, this.bufCol);
         }
         return this.colGenerated;
     }
     bindTransform1() {
         if (this.transformGenerated1) {
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].ARRAY_BUFFER, this.bufTransform1);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].ARRAY_BUFFER, this.bufTransform1);
         }
         return this.transformGenerated1;
     }
     bindTransform2() {
         if (this.transformGenerated2) {
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].ARRAY_BUFFER, this.bufTransform2);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].ARRAY_BUFFER, this.bufTransform2);
         }
         return this.transformGenerated2;
     }
     bindTransform3() {
         if (this.transformGenerated3) {
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].ARRAY_BUFFER, this.bufTransform3);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].ARRAY_BUFFER, this.bufTransform3);
         }
         return this.transformGenerated1;
     }
     bindTransform4() {
         if (this.transformGenerated4) {
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].ARRAY_BUFFER, this.bufTransform4);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].ARRAY_BUFFER, this.bufTransform4);
         }
         return this.transformGenerated1;
     }
     bindUV() {
         if (this.uvGenerated) {
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].ARRAY_BUFFER, this.bufUV);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].ARRAY_BUFFER, this.bufUV);
         }
         return this.uvGenerated;
     }
@@ -5398,7 +5415,7 @@ class Drawable {
         return this.count;
     }
     drawMode() {
-        return __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TRIANGLES;
+        return __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TRIANGLES;
     }
     setNumInstances(num) {
         this.numInstances = num;
@@ -6121,7 +6138,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
-    shape: 'wahoo',
+    shape: 'cube',
     slice: 0,
 };
 let screenQuad;
@@ -6133,7 +6150,7 @@ let bread;
 function loadScene() {
     screenQuad = new __WEBPACK_IMPORTED_MODULE_3__geometry_ScreenQuad__["a" /* default */]();
     screenQuad.create();
-    let obj2 = Object(__WEBPACK_IMPORTED_MODULE_6__globals__["c" /* readTextFile */])('./src/cube.obj');
+    let obj2 = Object(__WEBPACK_IMPORTED_MODULE_6__globals__["d" /* readTextFile */])('./src/cube.obj');
     pot = new __WEBPACK_IMPORTED_MODULE_8__geometry_Mesh__["a" /* default */](obj2, __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0, 0, 0));
     pot.create();
     texture2D = new __WEBPACK_IMPORTED_MODULE_9__rendering_gl_Texture__["a" /* default */]('./src/wahoo.bmp', 0, 2);
@@ -6151,8 +6168,8 @@ function main() {
     var show = { add: function () { flag = true; } };
     // Add controls to the gui
     const gui = new __WEBPACK_IMPORTED_MODULE_2_dat_gui__["GUI"]();
-    gui.add(controls, 'shape', ['wahoo', 'sphere']);
-    gui.add(controls, 'slice', 0.0, 10.0).step(1.0);
+    gui.add(controls, 'shape', ['wahoo', 'sphere', 'cube']);
+    gui.add(controls, 'slice', 0.0, 100.0).step(1.0);
     gui.add(show, 'add').name('Cut the bread');
     // get canvas and webgl context
     const canvas = document.getElementById('canvas');
@@ -6162,7 +6179,7 @@ function main() {
     }
     // `setGL` is a function imported above which sets the value of `gl` in the `globals.ts` module.
     // Later, we can import `gl` from `globals.ts` to access it
-    Object(__WEBPACK_IMPORTED_MODULE_6__globals__["d" /* setGL */])(gl);
+    Object(__WEBPACK_IMPORTED_MODULE_6__globals__["e" /* setGL */])(gl);
     // Initial call to load scene
     loadScene();
     //const camera = new Camera(vec3.fromValues(50, 50, 50), vec3.fromValues(50, 50, 50));
@@ -6186,16 +6203,30 @@ function main() {
     let path;
     let path_b;
     let curSlice = controls.slice;
+    let wahoo_size = 256;
+    let cube_size = 128;
+    let sphere_size = 50;
+    let size = 0;
     if (controls.shape == 'wahoo') {
         path = './src/wahoo.txt';
         path_b = './src/wahoo_b.txt';
+        bread.size = wahoo_size;
     }
     else if (controls.shape == 'sphere') {
         path = './src/sphere.txt';
         path_b = './src/sphere_b.txt';
+        bread.size = sphere_size;
     }
-    var disArray = bread.calDistance(path, path_b);
-    pot = bread.drawBread(path, controls.slice, pot, disArray);
+    else if (controls.shape == 'cube') {
+        path = './src/cube.txt';
+        path_b = './src/cube_b.txt';
+        bread.size = cube_size;
+    }
+    //bread.calDist(path, path_b);
+    bread.passTexture(path, path_b);
+    //console.log(bread.textArray);
+    bread.generateBubble();
+    pot = bread.drawBread(path, path_b, controls.slice, pot);
     // This function will be called every frame
     function tick() {
         camera.update();
@@ -6209,19 +6240,29 @@ function main() {
         if (controls.shape == 'wahoo') {
             tmpPath = './src/wahoo.txt';
             tmpPath_b = './src/wahoo_b.txt';
+            bread.size = wahoo_size;
         }
         else if (controls.shape == 'sphere') {
             tmpPath = './src/sphere.txt';
             tmpPath_b = './src/sphere_b.txt';
+            bread.size = sphere_size;
+        }
+        else if (controls.shape == 'cube') {
+            tmpPath = './src/cube.txt';
+            tmpPath_b = './src/cube_b.txt';
+            bread.size = cube_size;
         }
         if (path != tmpPath) {
             path = tmpPath;
-            disArray = bread.calDistance(tmpPath, tmpPath_b);
-            pot = bread.drawBread(path, curSlice, pot, disArray);
+            bread.passTexture(path, tmpPath_b);
+            bread.generateBubble();
+            pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
         }
         if (controls.slice != curSlice) {
             curSlice = controls.slice;
-            pot = bread.drawBread(path, curSlice, pot, disArray);
+            // bread.passTexture(path, path_b);
+            // bread.textArray = bread.generateBubble();
+            pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
         }
         renderer.render(camera, instancedShader, [pot]);
         renderer.render(camera, flat, [screenQuad]);
@@ -13259,10 +13300,10 @@ class ScreenQuad extends __WEBPACK_IMPORTED_MODULE_0__rendering_gl_Drawable__["a
         this.generateIdx();
         this.generatePos();
         this.count = this.indices.length;
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].ELEMENT_ARRAY_BUFFER, this.bufIdx);
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].ELEMENT_ARRAY_BUFFER, this.indices, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].STATIC_DRAW);
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].ARRAY_BUFFER, this.bufPos);
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].ARRAY_BUFFER, this.positions, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].ELEMENT_ARRAY_BUFFER, this.bufIdx);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].ELEMENT_ARRAY_BUFFER, this.indices, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].ARRAY_BUFFER, this.bufPos);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].ARRAY_BUFFER, this.positions, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].STATIC_DRAW);
         this.numInstances = 1;
         console.log(`Created ScreenQuad`);
     }
@@ -13286,14 +13327,14 @@ class OpenGLRenderer {
         this.canvas = canvas;
     }
     setClearColor(r, g, b, a) {
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].clearColor(r, g, b, a);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].clearColor(r, g, b, a);
     }
     setSize(width, height) {
         this.canvas.width = width;
         this.canvas.height = height;
     }
     clear() {
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].clear(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].COLOR_BUFFER_BIT | __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].DEPTH_BUFFER_BIT);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].clear(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].COLOR_BUFFER_BIT | __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].DEPTH_BUFFER_BIT);
     }
     render(camera, prog, drawables) {
         let model = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
@@ -16455,11 +16496,11 @@ module.exports = true;
 var activeProgram = null;
 class Shader {
     constructor(type, source) {
-        this.shader = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].createShader(type);
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].shaderSource(this.shader, source);
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].compileShader(this.shader);
-        if (!__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getShaderParameter(this.shader, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].COMPILE_STATUS)) {
-            throw __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getShaderInfoLog(this.shader);
+        this.shader = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].createShader(type);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].shaderSource(this.shader, source);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].compileShader(this.shader);
+        if (!__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getShaderParameter(this.shader, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].COMPILE_STATUS)) {
+            throw __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getShaderInfoLog(this.shader);
         }
     }
 }
@@ -16468,141 +16509,141 @@ class Shader {
 ;
 class ShaderProgram {
     constructor(shaders) {
-        this.prog = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].createProgram();
+        this.prog = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].createProgram();
         for (let shader of shaders) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].attachShader(this.prog, shader.shader);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].attachShader(this.prog, shader.shader);
         }
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].linkProgram(this.prog);
-        if (!__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getProgramParameter(this.prog, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].LINK_STATUS)) {
-            throw __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getProgramInfoLog(this.prog);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].linkProgram(this.prog);
+        if (!__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getProgramParameter(this.prog, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].LINK_STATUS)) {
+            throw __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getProgramInfoLog(this.prog);
         }
-        this.attrPos = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getAttribLocation(this.prog, "vs_Pos");
-        this.attrCol = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getAttribLocation(this.prog, "vs_Col");
-        this.attrTransform1 = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getAttribLocation(this.prog, "vs_Transform1");
-        this.attrTransform2 = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getAttribLocation(this.prog, "vs_Transform2");
-        this.attrTransform3 = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getAttribLocation(this.prog, "vs_Transform3");
-        this.attrTransform4 = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getAttribLocation(this.prog, "vs_Transform4");
-        this.attrUV = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getAttribLocation(this.prog, "vs_UV");
-        this.attrNor = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getAttribLocation(this.prog, "vs_Nor");
-        this.unifModel = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getUniformLocation(this.prog, "u_Model");
-        this.unifModelInvTr = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getUniformLocation(this.prog, "u_ModelInvTr");
-        this.unifViewProj = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getUniformLocation(this.prog, "u_ViewProj");
-        this.unifCameraAxes = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getUniformLocation(this.prog, "u_CameraAxes");
-        this.unifTime = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getUniformLocation(this.prog, "u_Time");
-        this.unifEye = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getUniformLocation(this.prog, "u_Eye");
-        this.unifRef = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getUniformLocation(this.prog, "u_Ref");
-        this.unifUp = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getUniformLocation(this.prog, "u_Up");
-        this.unifSampler1 = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getUniformLocation(this.prog, "u_Texture");
-        this.unifSampler2 = __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].getUniformLocation(this.prog, "u_3DTexture");
+        this.attrPos = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getAttribLocation(this.prog, "vs_Pos");
+        this.attrCol = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getAttribLocation(this.prog, "vs_Col");
+        this.attrTransform1 = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getAttribLocation(this.prog, "vs_Transform1");
+        this.attrTransform2 = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getAttribLocation(this.prog, "vs_Transform2");
+        this.attrTransform3 = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getAttribLocation(this.prog, "vs_Transform3");
+        this.attrTransform4 = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getAttribLocation(this.prog, "vs_Transform4");
+        this.attrUV = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getAttribLocation(this.prog, "vs_UV");
+        this.attrNor = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getAttribLocation(this.prog, "vs_Nor");
+        this.unifModel = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getUniformLocation(this.prog, "u_Model");
+        this.unifModelInvTr = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getUniformLocation(this.prog, "u_ModelInvTr");
+        this.unifViewProj = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getUniformLocation(this.prog, "u_ViewProj");
+        this.unifCameraAxes = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getUniformLocation(this.prog, "u_CameraAxes");
+        this.unifTime = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getUniformLocation(this.prog, "u_Time");
+        this.unifEye = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getUniformLocation(this.prog, "u_Eye");
+        this.unifRef = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getUniformLocation(this.prog, "u_Ref");
+        this.unifUp = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getUniformLocation(this.prog, "u_Up");
+        this.unifSampler1 = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getUniformLocation(this.prog, "u_Texture");
+        this.unifSampler2 = __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].getUniformLocation(this.prog, "u_3DTexture");
     }
     // Bind the given Texture to the given texture unit
     bindTexToUnit(handleName, tex, unit) {
         this.use();
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].activeTexture(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].TEXTURE0 + unit);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].activeTexture(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].TEXTURE0 + unit);
         tex.bindTex();
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniform1i(handleName, unit);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniform1i(handleName, unit);
     }
     bind3DTexToUnit(handleName, tex, unit) {
         this.use();
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].activeTexture(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].TEXTURE0 + unit);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].activeTexture(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].TEXTURE0 + unit);
         tex.bind3DTex();
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniform1i(handleName, unit);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniform1i(handleName, unit);
     }
     use() {
         if (activeProgram !== this.prog) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].useProgram(this.prog);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].useProgram(this.prog);
             activeProgram = this.prog;
         }
     }
     setEyeRefUp(eye, ref, up) {
         this.use();
         if (this.unifEye !== -1) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniform3f(this.unifEye, eye[0], eye[1], eye[2]);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniform3f(this.unifEye, eye[0], eye[1], eye[2]);
         }
         if (this.unifRef !== -1) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniform3f(this.unifRef, ref[0], ref[1], ref[2]);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniform3f(this.unifRef, ref[0], ref[1], ref[2]);
         }
         if (this.unifUp !== -1) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniform3f(this.unifUp, up[0], up[1], up[2]);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniform3f(this.unifUp, up[0], up[1], up[2]);
         }
     }
     setDimensions(width, height) {
         this.use();
         if (this.unifDimensions !== -1) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniform2f(this.unifDimensions, width, height);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniform2f(this.unifDimensions, width, height);
         }
     }
     setModelMatrix(model) {
         this.use();
         if (this.unifModel !== -1) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniformMatrix4fv(this.unifModel, false, model);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniformMatrix4fv(this.unifModel, false, model);
         }
         if (this.unifModelInvTr !== -1) {
             let modelinvtr = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
             __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].transpose(modelinvtr, model);
             __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].invert(modelinvtr, modelinvtr);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniformMatrix4fv(this.unifModelInvTr, false, modelinvtr);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniformMatrix4fv(this.unifModelInvTr, false, modelinvtr);
         }
     }
     setViewProjMatrix(vp) {
         this.use();
         if (this.unifViewProj !== -1) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniformMatrix4fv(this.unifViewProj, false, vp);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniformMatrix4fv(this.unifViewProj, false, vp);
         }
     }
     setCameraAxes(axes) {
         this.use();
         if (this.unifCameraAxes !== -1) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniformMatrix3fv(this.unifCameraAxes, false, axes);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniformMatrix3fv(this.unifCameraAxes, false, axes);
         }
     }
     setTime(t) {
         this.use();
         if (this.unifTime !== -1) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].uniform1f(this.unifTime, t);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].uniform1f(this.unifTime, t);
         }
     }
     draw(d) {
         this.use();
         if (this.attrPos != -1 && d.bindPos()) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].enableVertexAttribArray(this.attrPos);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribPointer(this.attrPos, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].FLOAT, false, 0, 0);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribDivisor(this.attrPos, 0); // Advance 1 index in pos VBO for each vertex
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].enableVertexAttribArray(this.attrPos);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribPointer(this.attrPos, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].FLOAT, false, 0, 0);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribDivisor(this.attrPos, 0); // Advance 1 index in pos VBO for each vertex
         }
         if (this.attrNor != -1 && d.bindNor()) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].enableVertexAttribArray(this.attrNor);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribPointer(this.attrNor, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].FLOAT, false, 0, 0);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribDivisor(this.attrNor, 0); // Advance 1 index in nor VBO for each vertex
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].enableVertexAttribArray(this.attrNor);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribPointer(this.attrNor, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].FLOAT, false, 0, 0);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribDivisor(this.attrNor, 0); // Advance 1 index in nor VBO for each vertex
         }
         if (this.attrCol != -1 && d.bindCol()) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].enableVertexAttribArray(this.attrCol);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribPointer(this.attrCol, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].FLOAT, false, 0, 0);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribDivisor(this.attrCol, 1); // Advance 1 index in col VBO for each drawn instance
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].enableVertexAttribArray(this.attrCol);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribPointer(this.attrCol, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].FLOAT, false, 0, 0);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribDivisor(this.attrCol, 1); // Advance 1 index in col VBO for each drawn instance
         }
         if (this.attrTransform1 != -1 && d.bindTransform1()) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].enableVertexAttribArray(this.attrTransform1);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribPointer(this.attrTransform1, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].FLOAT, false, 0, 0);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribDivisor(this.attrTransform1, 1); // Advance 1 index in translate VBO for each drawn instance
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].enableVertexAttribArray(this.attrTransform1);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribPointer(this.attrTransform1, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].FLOAT, false, 0, 0);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribDivisor(this.attrTransform1, 1); // Advance 1 index in translate VBO for each drawn instance
         }
         if (this.attrTransform2 != -1 && d.bindTransform2()) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].enableVertexAttribArray(this.attrTransform2);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribPointer(this.attrTransform2, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].FLOAT, false, 0, 0);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribDivisor(this.attrTransform2, 1); // Advance 1 index in translate VBO for each drawn instance
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].enableVertexAttribArray(this.attrTransform2);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribPointer(this.attrTransform2, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].FLOAT, false, 0, 0);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribDivisor(this.attrTransform2, 1); // Advance 1 index in translate VBO for each drawn instance
         }
         if (this.attrTransform3 != -1 && d.bindTransform3()) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].enableVertexAttribArray(this.attrTransform3);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribPointer(this.attrTransform3, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].FLOAT, false, 0, 0);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribDivisor(this.attrTransform3, 1); // Advance 1 index in translate VBO for each drawn instance
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].enableVertexAttribArray(this.attrTransform3);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribPointer(this.attrTransform3, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].FLOAT, false, 0, 0);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribDivisor(this.attrTransform3, 1); // Advance 1 index in translate VBO for each drawn instance
         }
         if (this.attrTransform4 != -1 && d.bindTransform4()) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].enableVertexAttribArray(this.attrTransform4);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribPointer(this.attrTransform4, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].FLOAT, false, 0, 0);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribDivisor(this.attrTransform4, 1); // Advance 1 index in translate VBO for each drawn instance
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].enableVertexAttribArray(this.attrTransform4);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribPointer(this.attrTransform4, 4, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].FLOAT, false, 0, 0);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribDivisor(this.attrTransform4, 1); // Advance 1 index in translate VBO for each drawn instance
         }
         if (this.attrUV != -1 && d.bindUV()) {
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].enableVertexAttribArray(this.attrUV);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribPointer(this.attrUV, 2, __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].FLOAT, false, 0, 0);
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].vertexAttribDivisor(this.attrUV, 0); // Advance 1 index in pos VBO for each vertex
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].enableVertexAttribArray(this.attrUV);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribPointer(this.attrUV, 2, __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].FLOAT, false, 0, 0);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].vertexAttribDivisor(this.attrUV, 0); // Advance 1 index in pos VBO for each vertex
         }
         // TODO: Set up attribute data for additional instanced rendering data as needed
         d.bindIdx();
@@ -16617,23 +16658,23 @@ class ShaderProgram {
         // by the GPU, thus being the same value for the first set of four vertices,
         // then advancing to a new value for the next four, then the next four, and
         // so on.
-        __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].drawElementsInstanced(d.drawMode(), d.elemCount(), __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].UNSIGNED_INT, 0, d.numInstances);
+        __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].drawElementsInstanced(d.drawMode(), d.elemCount(), __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].UNSIGNED_INT, 0, d.numInstances);
         if (this.attrPos != -1)
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].disableVertexAttribArray(this.attrPos);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].disableVertexAttribArray(this.attrPos);
         if (this.attrNor != -1)
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].disableVertexAttribArray(this.attrNor);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].disableVertexAttribArray(this.attrNor);
         if (this.attrCol != -1)
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].disableVertexAttribArray(this.attrCol);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].disableVertexAttribArray(this.attrCol);
         if (this.attrTransform1 != -1)
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].disableVertexAttribArray(this.attrTransform1);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].disableVertexAttribArray(this.attrTransform1);
         if (this.attrTransform2 != -1)
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].disableVertexAttribArray(this.attrTransform2);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].disableVertexAttribArray(this.attrTransform2);
         if (this.attrTransform3 != -1)
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].disableVertexAttribArray(this.attrTransform3);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].disableVertexAttribArray(this.attrTransform3);
         if (this.attrTransform4 != -1)
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].disableVertexAttribArray(this.attrTransform4);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].disableVertexAttribArray(this.attrTransform4);
         if (this.attrUV != -1)
-            __WEBPACK_IMPORTED_MODULE_1__globals__["a" /* gl */].disableVertexAttribArray(this.attrUV);
+            __WEBPACK_IMPORTED_MODULE_1__globals__["b" /* gl */].disableVertexAttribArray(this.attrUV);
     }
 }
 ;
@@ -16703,16 +16744,16 @@ class Mesh extends __WEBPACK_IMPORTED_MODULE_1__rendering_gl_Drawable__["a" /* d
         this.generateTransform3();
         this.generateTransform4();
         this.count = this.indices.length;
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ELEMENT_ARRAY_BUFFER, this.bufIdx);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ELEMENT_ARRAY_BUFFER, this.indices, __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].STATIC_DRAW);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.bufNor);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.normals, __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].STATIC_DRAW);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.bufPos);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.positions, __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ELEMENT_ARRAY_BUFFER, this.bufIdx);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ELEMENT_ARRAY_BUFFER, this.indices, __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.bufNor);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.normals, __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.bufPos);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.positions, __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].STATIC_DRAW);
         // gl.bindBuffer(gl.ARRAY_BUFFER, this.bufCol);
         // gl.bufferData(gl.ARRAY_BUFFER, this.colors, gl.STATIC_DRAW);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.bufUV);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.uvs, __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.bufUV);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.uvs, __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].STATIC_DRAW);
         //console.log(`Created Mesh from OBJ`);
         this.objString = ""; // hacky clear
     }
@@ -16722,16 +16763,16 @@ class Mesh extends __WEBPACK_IMPORTED_MODULE_1__rendering_gl_Drawable__["a" /* d
         this.array2 = array2;
         this.array3 = array3;
         this.array4 = array4;
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.bufCol);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.colors, __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].STATIC_DRAW);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.bufTransform1);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.array1, __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].STATIC_DRAW);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.bufTransform2);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.array2, __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].STATIC_DRAW);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.bufTransform3);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.array3, __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].STATIC_DRAW);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.bufTransform4);
-        __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].ARRAY_BUFFER, this.array4, __WEBPACK_IMPORTED_MODULE_2__globals__["a" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.bufCol);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.colors, __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.bufTransform1);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.array1, __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.bufTransform2);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.array2, __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.bufTransform3);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.array3, __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].STATIC_DRAW);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bindBuffer(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.bufTransform4);
+        __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].bufferData(__WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].ARRAY_BUFFER, this.array4, __WEBPACK_IMPORTED_MODULE_2__globals__["b" /* gl */].STATIC_DRAW);
     }
 }
 ;
@@ -16754,10 +16795,10 @@ class Mesh extends __WEBPACK_IMPORTED_MODULE_1__rendering_gl_Drawable__["a" /* d
 
 class Texture {
     bindTex() {
-        __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindTexture(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, this.texture);
+        __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindTexture(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, this.texture);
     }
     bind3DTex() {
-        __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].bindTexture(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_3D, this.texture);
+        __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].bindTexture(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_3D, this.texture);
     }
     handle() {
         return this.texture;
@@ -16767,51 +16808,51 @@ class Texture {
     }
     constructor(imgSource, clampVert, type) {
         // create a white pixel to serve as placeholder
-        const formatSrc = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].RGBA;
-        const formatDst = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].RGBA;
+        const formatSrc = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].RGBA;
+        const formatDst = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].RGBA;
         const lvl = 0;
         const phWidth = 1; // placeholder
         const phHeight = 1;
         const phDepth = 1;
         const phImg = new Uint8Array([255, 255, 255, 255]);
-        const formatBit = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].UNSIGNED_BYTE; // TODO: HDR
+        const formatBit = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].UNSIGNED_BYTE; // TODO: HDR
         if (type == 2.0) {
-            this.texture = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createTexture();
+            this.texture = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createTexture();
             this.bindTex();
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texImage2D(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, lvl, formatDst, phWidth, phHeight, 0, formatSrc, formatBit, phImg);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texImage2D(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, lvl, formatDst, phWidth, phHeight, 0, formatSrc, formatBit, phImg);
             // get a javascript image locally and load it. not instant but will auto-replace white pixel
             const img = new Image();
             if (clampVert == 0) {
                 img.onload = function () {
                     this.bindTex();
                     console.log("check 2d");
-                    __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texImage2D(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, lvl, formatDst, img.width, img.height, 0, formatSrc, formatBit, img);
-                    __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_WRAP_S, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].REPEAT);
-                    __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_WRAP_T, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].REPEAT);
-                    __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_MIN_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].LINEAR);
-                    __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_MAG_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].LINEAR);
+                    __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texImage2D(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, lvl, formatDst, img.width, img.height, 0, formatSrc, formatBit, img);
+                    __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_WRAP_S, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].REPEAT);
+                    __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_WRAP_T, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].REPEAT);
+                    __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_MIN_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].LINEAR);
+                    __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_MAG_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].LINEAR);
                 }.bind(this);
             }
             else {
                 img.onload = function () {
                     this.bindTex();
-                    __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texImage2D(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, lvl, formatDst, img.width, img.height, 0, formatSrc, formatBit, img);
-                    __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_WRAP_S, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].CLAMP_TO_EDGE);
-                    __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_WRAP_T, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].CLAMP_TO_EDGE);
-                    __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_MIN_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].LINEAR);
-                    __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_MAG_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].LINEAR);
+                    __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texImage2D(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, lvl, formatDst, img.width, img.height, 0, formatSrc, formatBit, img);
+                    __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_WRAP_S, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].CLAMP_TO_EDGE);
+                    __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_WRAP_T, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].CLAMP_TO_EDGE);
+                    __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_MIN_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].LINEAR);
+                    __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_2D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_MAG_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].LINEAR);
                 }.bind(this);
             }
             img.src = imgSource; // load the image
         }
         else if (type == 3.0) {
-            this.texture = __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].createTexture();
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].activeTexture(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE0);
+            this.texture = __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].createTexture();
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].activeTexture(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE0);
             this.bind3DTex();
             //gl.texImage3D(gl.TEXTURE_3D, lvl, formatDst, phWidth, phHeight, phDepth, 0, formatSrc, formatBit, phImg);
             //const img = new Image();
             // if (clampVert == 0) {
-            let raw = Object(__WEBPACK_IMPORTED_MODULE_0__globals__["c" /* readTextFile */])(imgSource);
+            let raw = Object(__WEBPACK_IMPORTED_MODULE_0__globals__["d" /* readTextFile */])(imgSource);
             // let raw: string = readRawFile(imgSource);
             // var raw = 
             //console.log(raw.length);
@@ -16831,24 +16872,24 @@ class Texture {
             }
             // this.bind3DTex();
             // gl.texImage3D(gl.TEXTURE_3D, lvl, formatDst, SIZE, SIZE, SIZE, 0, formatSrc, formatBit, data);
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_WRAP_S, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].REPEAT);
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_WRAP_T, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].REPEAT);
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_WRAP_R, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].REPEAT);
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_MAG_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].LINEAR);
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_MIN_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].LINEAR);
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_BASE_LEVEL, 0);
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_MAX_LEVEL, Math.log2(SIZE));
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_WRAP_S, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].REPEAT);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_WRAP_T, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].REPEAT);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_WRAP_R, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].REPEAT);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_MAG_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].LINEAR);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_MIN_FILTER, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].LINEAR);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_BASE_LEVEL, 0);
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texParameteri(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_3D, __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_MAX_LEVEL, Math.log2(SIZE));
             // gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
             // gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].texImage3D(__WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].TEXTURE_3D, // target
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].texImage3D(__WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].TEXTURE_3D, // target
             0, // level
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].R8, // internalformat
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].R8, // internalformat
             SIZE, // width
             SIZE, // height
             SIZE, // depth
             0, // border
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].RED, // format
-            __WEBPACK_IMPORTED_MODULE_0__globals__["a" /* gl */].UNSIGNED_BYTE, // type
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].RED, // format
+            __WEBPACK_IMPORTED_MODULE_0__globals__["b" /* gl */].UNSIGNED_BYTE, // type
             data // pixel
             );
             console.log("already binded");
@@ -16872,54 +16913,70 @@ class Texture {
 
 class Bread {
     constructor() {
+        this.distArray = [];
+        this.textArray = [];
+        this.boundTexture = [];
+        this.distArray = new Array(50 * 50 * 50);
+        this.distArray.fill(-1);
+        this.size = 50;
     }
-    drawBread(fillpath, curSlice, pot, distArray) {
+    passTexture(fillpath, boundPath) {
+        var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["c" /* parseTxt */])(fillpath);
+        this.textArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* generateTexture */])(offsetsArray, this.size);
+        var boundArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["c" /* parseTxt */])(boundPath);
+        this.boundTexture = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* generateTexture */])(boundArray, this.size);
+        //console.log(this.textArray);
+    }
+    drawBread(fillpath, boundPath, curSlice, pot) {
+        //console.log(this.textArray);
         pot.colorsArray = [];
         pot.transArray1 = [];
         pot.transArray2 = [];
         pot.transArray3 = [];
         pot.transArray4 = [];
-        var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* parseTxt */])(fillpath);
         var count = 0;
-        var maxDist = Math.max.apply(null, distArray);
-        for (let m = 0; m < offsetsArray.length / 3; m++) {
-            let i = parseFloat(offsetsArray[3 * m]);
-            let j = parseFloat(offsetsArray[3 * m + 1]);
-            let k = parseFloat(offsetsArray[3 * m + 2]);
-            let dist = distArray[m];
-            if (i < curSlice * 5.0)
+        var cut = curSlice * this.size / 100.0;
+        for (var i = 0; i < this.size; i++) {
+            if (i < cut)
                 continue;
-            //console.log(i + " " + j + " " + k );
-            let transform = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-            let translate = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-            let scale = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
-            var trans = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(i, j, k);
-            var scalar = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0.05, 0.05, 0.05);
-            __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromScaling(scale, scalar);
-            __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromTranslation(translate, trans);
-            __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, scale);
-            __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, translate);
-            pot.transArray1.push(transform[0]);
-            pot.transArray1.push(transform[1]);
-            pot.transArray1.push(transform[2]);
-            pot.transArray1.push(transform[3]);
-            pot.transArray2.push(transform[4]);
-            pot.transArray2.push(transform[5]);
-            pot.transArray2.push(transform[6]);
-            pot.transArray2.push(transform[7]);
-            pot.transArray3.push(transform[8]);
-            pot.transArray3.push(transform[9]);
-            pot.transArray3.push(transform[10]);
-            pot.transArray3.push(transform[11]);
-            pot.transArray4.push(transform[12]);
-            pot.transArray4.push(transform[13]);
-            pot.transArray4.push(transform[14]);
-            pot.transArray4.push(transform[15]);
-            pot.colorsArray.push(1.0);
-            pot.colorsArray.push(0.0);
-            pot.colorsArray.push(dist / maxDist);
-            pot.colorsArray.push(1.0); // Alpha channel
-            count++;
+            for (var j = 0; j < this.size; j++) {
+                for (var k = 0; k < this.size; k++) {
+                    if (this.textArray[i + j * this.size + k * this.size * this.size] == 1) {
+                        //console.log("check drawing ");
+                        let transform = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
+                        let translate = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
+                        let scale = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].create();
+                        var trans = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(i - this.size / 2.0, j - this.size / 2.0, k - this.size / 2.0);
+                        var scalar = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0.05, 0.05, 0.05);
+                        //var scalar = vec3.fromValues(0.01, 1, 1);
+                        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromScaling(scale, scalar);
+                        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].fromTranslation(translate, trans);
+                        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, scale);
+                        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["b" /* mat4 */].multiply(transform, transform, translate);
+                        pot.transArray1.push(transform[0]);
+                        pot.transArray1.push(transform[1]);
+                        pot.transArray1.push(transform[2]);
+                        pot.transArray1.push(transform[3]);
+                        pot.transArray2.push(transform[4]);
+                        pot.transArray2.push(transform[5]);
+                        pot.transArray2.push(transform[6]);
+                        pot.transArray2.push(transform[7]);
+                        pot.transArray3.push(transform[8]);
+                        pot.transArray3.push(transform[9]);
+                        pot.transArray3.push(transform[10]);
+                        pot.transArray3.push(transform[11]);
+                        pot.transArray4.push(transform[12]);
+                        pot.transArray4.push(transform[13]);
+                        pot.transArray4.push(transform[14]);
+                        pot.transArray4.push(transform[15]);
+                        pot.colorsArray.push(1.0);
+                        pot.colorsArray.push(0.0);
+                        pot.colorsArray.push(this.boundTexture[i + j * this.size + k * this.size * this.size]);
+                        pot.colorsArray.push(1.0); // Alpha channel
+                        count++;
+                    }
+                }
+            }
         }
         let colors = new Float32Array(pot.colorsArray);
         let col1 = new Float32Array(pot.transArray1);
@@ -16931,26 +16988,73 @@ class Bread {
         pot.setNumInstances(count); // grid of "particles"
         return pot;
     }
-    calDistance(fillPath, boundPath) {
-        var fillArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* parseTxt */])(fillPath);
-        var boundArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["b" /* parseTxt */])(boundPath);
-        var DF = [];
-        for (var i = 0; i < fillArray.length / 3; i++) {
-            var minDist = 1000000000.0;
+    calDist(fillpath, boundPath) {
+        var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["c" /* parseTxt */])(fillpath);
+        var boundArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["c" /* parseTxt */])(boundPath);
+        // console.log(offsetsArray);
+        // console.log(boundArray);
+        for (var i = 0; i < offsetsArray.length / 3; i++) {
+            var min = 10000000000;
+            var fillPos = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(offsetsArray[3 * i], offsetsArray[3 * i] + 1, offsetsArray[3 * i] + 2);
             for (var j = 0; j < boundArray.length / 3; j++) {
+                var boundPos = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(boundArray[3 * j], boundArray[3 * j] + 1, boundArray[3 * j] + 2);
                 var diff = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0, 0, 0);
-                var bound = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(boundArray[j], boundArray[j + 1], boundArray[j + 2]);
-                var fill = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(fillArray[i], fillArray[i + 1], fillArray[i + 2]);
-                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].subtract(diff, bound, fill);
-                var length = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].length(diff);
-                if (length < minDist)
-                    minDist = length;
+                __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].subtract(diff, fillPos, boundPos);
+                min = Math.min(min, __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].length(diff));
             }
-            DF.push(minDist);
+            this.distArray[offsetsArray[3 * i] +
+                (offsetsArray[3 * i] + 1) * this.size +
+                (offsetsArray[3 * i] + 2) * this.size * this.size] = min;
         }
-        //console.log('DF');
-        // console.log(DF);
-        return DF;
+    }
+    calDistance(pos1, pos2) {
+        var diff = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(0.0, 0.0, 0.0);
+        __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].subtract(diff, pos1, pos2);
+        return __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].length(diff);
+    }
+    generateBubble() {
+        var scalar = 512 / this.size;
+        // console.log("distArray");
+        // console.log(this.distArray);
+        //baguette bread type
+        // var r_min = 1;
+        // var r_max = 5;
+        // var k = 0.07 * Math.pow(this.size, 3) / 5.0;
+        // var d = 2.78;
+        //home-baked bread type
+        var r_min = 1;
+        var r_max = 23 / 4; //should be 24 but 18 looks better 
+        var k = 0.69 * Math.pow(this.size, 3) / 5.0;
+        var d = 5.6;
+        // var r_min = 1;
+        // var r_max = 23;    //should be 24 but 18 looks better 
+        // var k = 0.69 * Math.pow(this.size, 3) / 20.0;
+        // var d = 5.6;
+        // r_min *= scalar;
+        // r_max *= scalar;
+        // k = k * scalar * scalar;
+        for (var i = r_min; i < r_max; i++) {
+            var N = k / (Math.pow(i, d));
+            for (var j = 0; j < N; j++) {
+                var x = Math.floor(Math.random() * this.size);
+                var y = Math.floor(Math.random() * this.size);
+                var z = Math.floor(Math.random() * this.size);
+                var center = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(x, y, z);
+                for (var a = -i; a < i + 1; a++) {
+                    for (var b = -i; b < i + 1; b++) {
+                        for (var c = -i; c < i + 1; c++) {
+                            var index = x + a + (y + b) * this.size + (z + c) * this.size * this.size;
+                            if (this.boundTexture[index] == 1)
+                                continue;
+                            var tmp = __WEBPACK_IMPORTED_MODULE_0_gl_matrix__["c" /* vec3 */].fromValues(x + a, (y + b), (z + c));
+                            if (this.calDistance(center, tmp) < i) {
+                                this.textArray[index] = 0.0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 ;
@@ -16961,13 +17065,13 @@ class Bread {
 /* 72 */
 /***/ (function(module, exports) {
 
-module.exports = "#version 300 es\n\nuniform mat4 u_ViewProj;\nuniform float u_Time;\n\nuniform mat3 u_CameraAxes; // Used for rendering particles as billboards (quads that are always looking at the camera)\n// gl_Position = center + vs_Pos.x * camRight + vs_Pos.y * camUp;\n\nin vec4 vs_Pos; // Non-instanced; each particle is the same quad drawn in a different place\nin vec4 vs_Nor; // Non-instanced, and presently unused\nin vec4 vs_Col; // An instanced rendering attribute; each particle instance has a different color\n// in vec3 vs_Translate; // Another instance rendering attribute used to position each quad instance in the scene\n in vec4 vs_Transform1;\n  in vec4 vs_Transform2;\n   in vec4 vs_Transform3;\n    in vec4 vs_Transform4;\nin vec2 vs_UV; // Non-instanced, and presently unused in main(). Feel free to use it for your meshes.\n\nout vec4 fs_Col;\nout vec4 fs_Pos;\nout vec2 fs_UV;\n//out vec4 fs_Rot;\n\n\n\n\nvoid main()\n{\n    fs_Col = vs_Col;\n    fs_Pos = vs_Pos;\n    fs_UV = vs_UV;\n    // fs_Rot = abs(vs_Rotate);\n\n    // vec3 offset = vs_Translate;\n    // vec4 rotate = (vs_Rotate);\n    // //offset.z = (sin((u_Time + offset.x) * 3.14159 * 0.1) + cos((u_Time + offset.y) * 3.14159 * 0.1)) * 1.5;\n\n    mat4 trans = mat4(vs_Transform1, vs_Transform2, vs_Transform3, vs_Transform4);\n    vec4 pos = trans * vs_Pos;\n\n    vec3 color = vec3(0.2314, 0.149, 0.0);\n\n    gl_Position = u_ViewProj * pos;\n\n}\n"
+module.exports = "#version 300 es\n\nuniform mat4 u_ViewProj;\nuniform float u_Time;\n\nuniform mat3 u_CameraAxes; // Used for rendering particles as billboards (quads that are always looking at the camera)\n// gl_Position = center + vs_Pos.x * camRight + vs_Pos.y * camUp;\n\nin vec4 vs_Pos; // Non-instanced; each particle is the same quad drawn in a different place\nin vec4 vs_Nor; // Non-instanced, and presently unused\nin vec4 vs_Col; // An instanced rendering attribute; each particle instance has a different color\n// in vec3 vs_Translate; // Another instance rendering attribute used to position each quad instance in the scene\n in vec4 vs_Transform1;\n  in vec4 vs_Transform2;\n   in vec4 vs_Transform3;\n    in vec4 vs_Transform4;\nin vec2 vs_UV; // Non-instanced, and presently unused in main(). Feel free to use it for your meshes.\n\nout vec4 fs_Col;\nout vec4 fs_Pos;\nout vec2 fs_UV;\nout vec4 fs_Nor;\n//out vec4 fs_Rot;\n\n\n\n\nvoid main()\n{\n    fs_Col = vs_Col;\n    //fs_Pos = vs_Pos;\n    fs_UV = vs_UV;\n    fs_Nor = vs_Nor;\n    // fs_Rot = abs(vs_Rotate);\n\n    // vec3 offset = vs_Translate;\n    // vec4 rotate = (vs_Rotate);\n    // //offset.z = (sin((u_Time + offset.x) * 3.14159 * 0.1) + cos((u_Time + offset.y) * 3.14159 * 0.1)) * 1.5;\n\n    //vec4 pos = vs_Pos - vec4(25.0, 15.0, 15.0, 0.0);\n    vec4 pos = vs_Pos;\n    mat4 trans = mat4(vs_Transform1, vs_Transform2, vs_Transform3, vs_Transform4);\n    pos = trans * pos;\n\n    fs_Pos = pos;\n\n    vec3 color = vec3(0.2314, 0.149, 0.0);\n\n    gl_Position = u_ViewProj * pos;\n\n}\n"
 
 /***/ }),
 /* 73 */
 /***/ (function(module, exports) {
 
-module.exports = "#version 300 es\nprecision highp float;\nprecision mediump sampler3D;\nuniform mat4 u_ViewProj;\nuniform float u_Time;\nuniform mat3 u_CameraAxes;\nuniform vec2 u_Dimensions;\nuniform sampler2D u_Texture;\nuniform sampler3D u_3DTexture;\nin vec4 fs_Col;\nin vec4 fs_Pos;\nin vec2 fs_UV;\n//in vec4 fs_Rot;\n\nout vec4 out_Col;\n\n\n\nvoid main()\n{\n\nvec4 color1 = vec4(0.7882, 0.4392, 0.0431, 1.0);\nvec4 color2 = vec4(0.9529, 0.8314, 0.502, 1.0);\n   \n   out_Col = mix(color2, color1, fs_Col.b);\n\n   //out_Col = fs_Col;\n}\n"
+module.exports = "#version 300 es\nprecision highp float;\nprecision mediump sampler3D;\nuniform vec3 u_Eye, u_Ref, u_Up;\nuniform mat4 u_ViewProj;\nuniform float u_Time;\nuniform mat3 u_CameraAxes;\nuniform vec2 u_Dimensions;\nuniform sampler2D u_Texture;\nuniform sampler3D u_3DTexture;\nin vec4 fs_Col;\nin vec4 fs_Pos;\nin vec2 fs_UV;\nin vec4 fs_Nor;\n//in vec4 fs_Rot;\n\nout vec4 out_Col;\n\n\n\nvoid main()\n{\n\n\n\nvec3 lightPos = vec3(20, 20, 20);\nfloat lambert = dot(vec3(fs_Nor), normalize(u_Eye));\nlambert = clamp(lambert, 0.0, 1.0);\nfloat ambient = 0.2;\nfloat lightIntensity = ambient + lambert;\n\nvec4 color1 = vec4(0.7882, 0.4392, 0.0431, 1.0);\nvec4 color2 = vec4(0.9922, 0.8157, 0.4863, 1.0);\n\nvec4 color3 = vec4(0.7059, 0.2863, 0.3922, 1.0);\n\n   // float dist = fs_Col.b;\n   // if(dist > 0.8) dist = 1.0;\n   \n   out_Col = mix(color2, color1, fs_Col.b) * lightIntensity;\n\n   out_Col = vec4(clamp(vec3(out_Col), vec3(0.0), vec3(1.0)), 1.0);\n\n   //out_Col = fs_Col;\n}\n"
 
 /***/ }),
 /* 74 */

@@ -17,7 +17,7 @@ export function readTextFile(file: string): string
             //console.log("check type get inside");
             if(rawFile.status === 200 || rawFile.status == 0)
             {
-                console.log("check type get inside");
+                //console.log("check type get inside");
                 var allText = rawFile.responseText;
                 text = allText;
             }
@@ -39,12 +39,35 @@ export function parseTxt(file: string): any
 
   for (var i = 0; i < lineArray.length; i++) {
     var tmpArray = lineArray[i].split(/[ ,]+/);
-    offsetsArray.push(tmpArray[0]);
-    offsetsArray.push(tmpArray[1]);
-    offsetsArray.push(tmpArray[2]);
+    //console.log(lineArray[i]);
+    offsetsArray.push(parseInt(tmpArray[0]));
+    offsetsArray.push(parseInt(tmpArray[1]));
+    offsetsArray.push(parseInt(tmpArray[2]));
   }
 
   return offsetsArray;
+}
+
+export function generateTexture(offsetsArray: Array<number>, size: number) : any
+{
+   
+   var length = Math.pow(size, 3);
+   var texture = new Array(length);
+
+  //  console.log("offetArray: ");
+  //  console.log(offsetsArray);
+   texture.fill(0);
+   for(var i = 0; i < offsetsArray.length / 3; i++)
+   {
+      var x = offsetsArray[3 * i];
+      var y = offsetsArray[3 * i + 1];
+      var z = offsetsArray[3 * i + 2];
+
+      var index = x + y * size + z * size * size;
+      texture[index] = 1;
+   }
+
+   return texture;
 }
 
 
