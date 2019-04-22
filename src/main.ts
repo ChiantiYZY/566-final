@@ -133,7 +133,7 @@ function main() {
 
   bread = new Bread(size);
  
-  bread.calDist(path, path_b);
+  // bread.calDist(path, path_b);
 
   bread.passTexture(path, path_b);
   //console.log(bread.textArray);

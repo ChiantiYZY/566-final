@@ -6222,7 +6222,7 @@ function main() {
         size = cube_size;
     }
     bread = new __WEBPACK_IMPORTED_MODULE_10__Bread__["a" /* default */](size);
-    bread.calDist(path, path_b);
+    // bread.calDist(path, path_b);
     bread.passTexture(path, path_b);
     //console.log(bread.textArray);
     bread.generateBubble();
