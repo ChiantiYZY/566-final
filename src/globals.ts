@@ -56,7 +56,7 @@ export function generateTexture(offsetsArray: Array<number>, size: number) : any
 
   //  console.log("offetArray: ");
   //  console.log(offsetsArray);
-   texture.fill(0);
+   texture.fill(-1);
    for(var i = 0; i < offsetsArray.length / 3; i++)
    {
       var x = offsetsArray[3 * i];

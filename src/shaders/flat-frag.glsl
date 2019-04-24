@@ -6,6 +6,7 @@ uniform vec2 u_Dimensions;
 uniform float u_Time;
 
 in vec2 fs_Pos;
+in vec4 fs_Col;
 out vec4 out_Col;
 
 /**
@@ -125,7 +126,7 @@ void main() {
     vec3 color1 = doMagic(p);
     out_Col = vec4(color1 * 1.1, 1.0 );
 
-    out_Col = vec4(0.9882, 0.8667, 0.4706, 1.0);
+    out_Col = vec4(0.9137, 0.7451, 0.3804, 1.0);
     //draw_stars(out_Col, uv);
 
     //out_Col = vec4(p1, p1);

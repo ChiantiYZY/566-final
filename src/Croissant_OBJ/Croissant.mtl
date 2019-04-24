@@ -1,0 +1,17 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 10.12.2012 22:37:58
+
+newmtl Croissant_texture
+	Ns 45.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5000 0.5000 0.5000
+	Kd 0.5000 0.5000 0.5000
+	Ks 0.4871 0.4871 0.4871
+	Ke 0.0000 0.0000 0.0000
+	map_Ka Croissant_texture.jpg
+	map_Kd Croissant_texture.jpg
+	map_bump Croissant_texture_BUMP.jpg

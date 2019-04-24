@@ -14,11 +14,13 @@ import { stringify } from 'querystring';
 import { format } from 'url';
 import Bread from './Bread';
 import { cursorTo } from 'readline';
+import Background from './Background';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
-  shape: 'cube',
+  shape: 'sphere',
+  prove_Type: 'home-made',
   slice: 0,
 };
 
@@ -27,6 +29,7 @@ let pot:Mesh;
 let time: number = 0.0;
 let texture2D: Texture;
 let texture3D: Texture;
+let bg : Background;
 
 let bread: Bread;
 
@@ -42,6 +45,8 @@ function loadScene() {
   texture2D = new Texture('./src/wahoo.bmp', 0, 2);
   texture3D = new Texture('./src/cube.raw', 0, 3);
 
+  bg = new Background();
+  bg.render();
 }
 
 function main() {
@@ -59,9 +64,10 @@ function main() {
   // Add controls to the gui
   const gui = new DAT.GUI();
 
-  gui.add(controls, 'shape', ['wahoo', 'sphere', 'cube']);
+  gui.add(controls, 'shape', ['wahoo', 'sphere', 'baguette', 'toast']);
+  gui.add(controls, 'prove_Type', ['home-made', 'baguette']);
   gui.add(controls, 'slice', 0.0, 100.0).step(1.0);
-  gui.add(show, 'add').name('Cut the bread');
+  gui.add(show, 'add').name('Prove the bread');
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -95,6 +101,11 @@ function main() {
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/flat-frag.glsl')),
   ]);
 
+  const flatInst = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/flatInst-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/flatInst-frag.glsl')),
+  ]);
+
 
   
 
@@ -106,9 +117,10 @@ function main() {
 
   let curSlice = controls.slice;
   
-  let wahoo_size = 256;
+  let wahoo_size = 128;
   let cube_size = 128;
-  let sphere_size = 50;
+  let sphere_size = 64;
+  let toast_size = 128;
   let size = 0;
 
   if(controls.shape == 'wahoo')
@@ -123,23 +135,35 @@ function main() {
       path_b = './src/sphere_b.txt'
       size = sphere_size;
   }
-  else if(controls.shape == 'cube')
+  else if(controls.shape == 'baguette')
   {
-      path = './src/cube.txt';
-      path_b = './src/cube_b.txt'
+      path = './src/shell.txt';
+      path_b = './src/shell_b.txt'
       size = cube_size;
+  }
+  else if(controls.shape == 'toast')
+  {
+      path = './src/toast.txt';
+      path_b = './src/toast_b.txt'
+      size = toast_size;
   }
 
 
   bread = new Bread(size);
+
+  var type = controls.prove_Type;
+  if(controls.prove_Type == 'home-made') bread.proveType = 1;
+  else if(controls.prove_Type == 'baguette') bread.proveType = 0;
  
   // bread.calDist(path, path_b);
 
   bread.passTexture(path, path_b);
   //console.log(bread.textArray);
-  bread.generateBubble();
+  // bread.generateBubble();
   
-  pot = bread.drawBread(path, path_b, controls.slice, pot);
+  //pot = bread.drawBread(path, path_b, controls.slice, pot);
+
+  pot = bread.initialBread(controls.slice, pot);
 
   
   // This function will be called every frame
@@ -148,6 +172,7 @@ function main() {
     stats.begin();
     instancedShader.setTime(time);
     flat.setTime(time++);
+    flatInst.setTime(time++);
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
 
     renderer.clear();
@@ -167,19 +192,42 @@ function main() {
         tmpPath_b = './src/sphere_b.txt'
         bread.size = sphere_size;
     }
-    else if(controls.shape == 'cube')
+    else if(controls.shape == 'baguette')
     {
-        tmpPath = './src/cube.txt';
-        tmpPath_b = './src/cube_b.txt'
-        bread.size = cube_size;
+      tmpPath = './src/shell.txt';
+      tmpPath_b = './src/shell_b.txt'
+        size = cube_size;
+    }
+    else if(controls.shape == 'toast')
+    {
+      tmpPath = './src/toast.txt';
+      tmpPath_b = './src/toast_b.txt'
+      size = toast_size;
+    }
+
+    if(controls.prove_Type != type)
+    {
+        type = controls.prove_Type;
+        if(type == 'home-made') bread.proveType = 1;
+        else if(type == 'baguette') bread.proveType = 0;
+        bread.generateBubble();
+        pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+ 
+    }
+
+
+    if(flag == true)
+    {
+      bread.generateBubble();
+      pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+      flag = false;
     }
     
     if(path != tmpPath) 
     {
        path = tmpPath;
        bread.passTexture(path, tmpPath_b);
-       bread.generateBubble();
-       pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+       pot = bread.initialBread(curSlice, pot);
     }
 
     if(controls.slice != curSlice)
@@ -191,9 +239,13 @@ function main() {
     }
 
  
+    renderer.render(camera, flat, [screenQuad]);
+    renderer.render(camera, flatInst, [bg.Croissant]);
+
+
     renderer.render(camera, instancedShader, [pot]);
 
-    renderer.render(camera, flat, [screenQuad]);
+    
     //renderer.render(camera, instancedShader, [petal]);
     stats.end();
 
@@ -206,12 +258,14 @@ function main() {
     camera.setAspectRatio(window.innerWidth / window.innerHeight);
     camera.updateProjectionMatrix();
     flat.setDimensions(window.innerWidth, window.innerHeight);
+    flatInst.setDimensions(window.innerWidth, window.innerHeight);
   }, false);
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.setAspectRatio(window.innerWidth / window.innerHeight);
   camera.updateProjectionMatrix();
   flat.setDimensions(window.innerWidth, window.innerHeight);
+  flatInst.setDimensions(window.innerWidth, window.innerHeight);
 
   // Start the render loop
   tick();
