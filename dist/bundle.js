@@ -6373,12 +6373,12 @@ function main() {
         else if (controls.shape == 'baguette') {
             tmpPath = './src/shell.txt';
             tmpPath_b = './src/shell_b.txt';
-            size = cube_size;
+            bread.size = cube_size;
         }
         else if (controls.shape == 'toast') {
             tmpPath = './src/toast.txt';
             tmpPath_b = './src/toast_b.txt';
-            size = toast_size;
+            bread.size = toast_size;
         }
         if (controls.prove_Type != type) {
             type = controls.prove_Type;
