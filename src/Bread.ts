@@ -25,15 +25,15 @@ class Bread {
         this.size = size;
         this.distArray = new Array(Math.pow(this.size, 3));
         this.distArray.fill(-1);
-
-
-        this.radiiArray = new Array(Math.pow(this.size, 3));
-        this.radiiArray.fill(-1);
         
     }
 
     passTexture(fillpath: string, boundPath: string)
     {
+
+        this.textArray = new Array(Math.pow(this.size, 3));
+        this.boundTexture = new Array(Math.pow(this.size, 3));
+
         var offsetsArray = parseTxt(fillpath);
         this.textArray = generateTexture(offsetsArray, this.size);
 
@@ -305,6 +305,11 @@ class Bread {
 
         // console.log("distArray");
         // console.log(this.distArray);
+
+
+        this.radiiArray = new Array(Math.pow(this.size, 3));
+        this.radiiArray.fill(-1);
+    
 
         var r_min, r_max, k, d;
 

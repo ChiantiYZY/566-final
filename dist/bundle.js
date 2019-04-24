@@ -16968,10 +16968,10 @@ class Bread {
         this.size = size;
         this.distArray = new Array(Math.pow(this.size, 3));
         this.distArray.fill(-1);
-        this.radiiArray = new Array(Math.pow(this.size, 3));
-        this.radiiArray.fill(-1);
     }
     passTexture(fillpath, boundPath) {
+        this.textArray = new Array(Math.pow(this.size, 3));
+        this.boundTexture = new Array(Math.pow(this.size, 3));
         var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["c" /* parseTxt */])(fillpath);
         this.textArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* generateTexture */])(offsetsArray, this.size);
         var boundArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["c" /* parseTxt */])(boundPath);
@@ -17151,6 +17151,8 @@ class Bread {
         var scalar = 512 / this.size;
         // console.log("distArray");
         // console.log(this.distArray);
+        this.radiiArray = new Array(Math.pow(this.size, 3));
+        this.radiiArray.fill(-1);
         var r_min, r_max, k, d;
         if (this.proveType == 0) {
             console.log("check baguette");

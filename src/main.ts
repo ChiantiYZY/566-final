@@ -196,7 +196,7 @@ function main() {
     {
       tmpPath = './src/shell.txt';
       tmpPath_b = './src/shell_b.txt'
-        bread.size = cube_size;
+      bread.size = cube_size;
     }
     else if(controls.shape == 'toast')
     {
