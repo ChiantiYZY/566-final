@@ -17,6 +17,7 @@ class Bread {
     afterRiseBoundry: Array<any> = [];
     newSize: number;
     proveType: number;
+    isProved: boolean;
 
     size:number;
 
@@ -25,6 +26,7 @@ class Bread {
         this.size = size;
         this.distArray = new Array(Math.pow(this.size, 3));
         this.distArray.fill(-1);
+        this.isProved = false;
         
     }
 
@@ -40,6 +42,8 @@ class Bread {
         var boundArray = parseTxt(boundPath);
         this.boundTexture = generateTexture(boundArray, this.size);
         //console.log(this.textArray);
+
+        this.isProved = false;
 
     }
 
@@ -102,9 +106,12 @@ class Bread {
                         pot.transArray4.push(transform[14]);
                         pot.transArray4.push(transform[15]);
 
-                        pot.colorsArray.push(1.0);
+                        var flag = 0;
+                        if(this.boundTexture[index] == 1) flag = 1; 
+
                         pot.colorsArray.push(0.0);
-                        pot.colorsArray.push(this.boundTexture[index]);
+                        pot.colorsArray.push(0.0);
+                        pot.colorsArray.push(flag);
                         pot.colorsArray.push(1.0); // Alpha channel
 
                         count++;
@@ -256,6 +263,12 @@ class Bread {
     }
 
 
+    makeBread(fillpath: string, boundPath: string, curSlice: number, pot: Mesh) : Mesh
+    {
+        if(this.isProved == false) return this.initialBread(curSlice, pot);
+        else return this.drawBread(fillpath, boundPath, curSlice, pot);
+    }
+
     calDist(fillpath: string, boundPath: string) : any
     {
         var offsetsArray = parseTxt(fillpath);
@@ -372,7 +385,7 @@ class Bread {
             }
         }
 
-        this.rise();
+        //this.rise();
     }
 
 

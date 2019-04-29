@@ -58,8 +58,10 @@ function main() {
   stats.domElement.style.top = '0px';
   document.body.appendChild(stats.domElement);
   let flag = false;
+  let flag_crust = false;
 
   var show = { add:function(){ flag = true }};
+  var show1 = {add:function(){ flag_crust = true}};
 
   // Add controls to the gui
   const gui = new DAT.GUI();
@@ -68,6 +70,7 @@ function main() {
   gui.add(controls, 'prove_Type', ['home-made', 'baguette']);
   gui.add(controls, 'slice', 0.0, 100.0).step(1.0);
   gui.add(show, 'add').name('Prove the bread');
+  gui.add(show1, 'add').name('Make Crust');
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -163,7 +166,9 @@ function main() {
   
   //pot = bread.drawBread(path, path_b, controls.slice, pot);
 
-  pot = bread.initialBread(controls.slice, pot);
+  //pot = bread.initialBread(controls.slice, pot);
+
+  pot = bread.makeBread(path, path_b, controls.slice, pot);
 
   
   // This function will be called every frame
@@ -211,7 +216,8 @@ function main() {
         if(type == 'home-made') bread.proveType = 1;
         else if(type == 'baguette') bread.proveType = 0;
         bread.generateBubble();
-        pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+        //pot = bread.initialBread(curSlice, pot);
+        pot = bread.makeBread(path, path_b, curSlice, pot);
  
     }
 
@@ -219,15 +225,25 @@ function main() {
     if(flag == true)
     {
       bread.generateBubble();
-      pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+      //pot = bread.initialBread(curSlice, pot);
+      pot = bread.makeBread(path, path_b, curSlice, pot);
       flag = false;
+    }
+
+    if(flag_crust == true)
+    {
+      bread.rise();
+      bread.isProved = true;
+      pot = bread.makeBread(path, tmpPath_b, curSlice, pot);
+      flag_crust = false;
     }
     
     if(path != tmpPath) 
     {
        path = tmpPath;
        bread.passTexture(path, tmpPath_b);
-       pot = bread.initialBread(curSlice, pot);
+       //pot = bread.initialBread(curSlice, pot);
+       pot = bread.makeBread(path, tmpPath_b, curSlice, pot);
     }
 
     if(controls.slice != curSlice)
@@ -235,7 +251,8 @@ function main() {
         curSlice = controls.slice;
         // bread.passTexture(path, path_b);
         // bread.textArray = bread.generateBubble();
-        pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+        //pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+        pot = bread.makeBread(path, tmpPath_b, curSlice, pot);
     }
 
  

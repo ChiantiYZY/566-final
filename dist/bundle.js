@@ -6270,13 +6270,16 @@ function main() {
     stats.domElement.style.top = '0px';
     document.body.appendChild(stats.domElement);
     let flag = false;
+    let flag_crust = false;
     var show = { add: function () { flag = true; } };
+    var show1 = { add: function () { flag_crust = true; } };
     // Add controls to the gui
     const gui = new __WEBPACK_IMPORTED_MODULE_2_dat_gui__["GUI"]();
     gui.add(controls, 'shape', ['wahoo', 'sphere', 'baguette', 'toast']);
     gui.add(controls, 'prove_Type', ['home-made', 'baguette']);
     gui.add(controls, 'slice', 0.0, 100.0).step(1.0);
     gui.add(show, 'add').name('Prove the bread');
+    gui.add(show1, 'add').name('Make Crust');
     // get canvas and webgl context
     const canvas = document.getElementById('canvas');
     const gl = canvas.getContext('webgl2');
@@ -6348,7 +6351,8 @@ function main() {
     //console.log(bread.textArray);
     // bread.generateBubble();
     //pot = bread.drawBread(path, path_b, controls.slice, pot);
-    pot = bread.initialBread(controls.slice, pot);
+    //pot = bread.initialBread(controls.slice, pot);
+    pot = bread.makeBread(path, path_b, controls.slice, pot);
     // This function will be called every frame
     function tick() {
         camera.update();
@@ -6387,23 +6391,33 @@ function main() {
             else if (type == 'baguette')
                 bread.proveType = 0;
             bread.generateBubble();
-            pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+            //pot = bread.initialBread(curSlice, pot);
+            pot = bread.makeBread(path, path_b, curSlice, pot);
         }
         if (flag == true) {
             bread.generateBubble();
-            pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+            //pot = bread.initialBread(curSlice, pot);
+            pot = bread.makeBread(path, path_b, curSlice, pot);
             flag = false;
+        }
+        if (flag_crust == true) {
+            bread.rise();
+            bread.isProved = true;
+            pot = bread.makeBread(path, tmpPath_b, curSlice, pot);
+            flag_crust = false;
         }
         if (path != tmpPath) {
             path = tmpPath;
             bread.passTexture(path, tmpPath_b);
-            pot = bread.initialBread(curSlice, pot);
+            //pot = bread.initialBread(curSlice, pot);
+            pot = bread.makeBread(path, tmpPath_b, curSlice, pot);
         }
         if (controls.slice != curSlice) {
             curSlice = controls.slice;
             // bread.passTexture(path, path_b);
             // bread.textArray = bread.generateBubble();
-            pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+            //pot = bread.drawBread(path, tmpPath_b, curSlice, pot);
+            pot = bread.makeBread(path, tmpPath_b, curSlice, pot);
         }
         renderer.render(camera, flat, [screenQuad]);
         renderer.render(camera, flatInst, [bg.Croissant]);
@@ -16968,6 +16982,7 @@ class Bread {
         this.size = size;
         this.distArray = new Array(Math.pow(this.size, 3));
         this.distArray.fill(-1);
+        this.isProved = false;
     }
     passTexture(fillpath, boundPath) {
         this.textArray = new Array(Math.pow(this.size, 3));
@@ -16977,6 +16992,7 @@ class Bread {
         var boundArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["c" /* parseTxt */])(boundPath);
         this.boundTexture = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["a" /* generateTexture */])(boundArray, this.size);
         //console.log(this.textArray);
+        this.isProved = false;
     }
     initialBread(curSlice, pot) {
         //console.log(this.textArray);
@@ -17022,9 +17038,12 @@ class Bread {
                         pot.transArray4.push(transform[13]);
                         pot.transArray4.push(transform[14]);
                         pot.transArray4.push(transform[15]);
-                        pot.colorsArray.push(1.0);
+                        var flag = 0;
+                        if (this.boundTexture[index] == 1)
+                            flag = 1;
                         pot.colorsArray.push(0.0);
-                        pot.colorsArray.push(this.boundTexture[index]);
+                        pot.colorsArray.push(0.0);
+                        pot.colorsArray.push(flag);
                         pot.colorsArray.push(1.0); // Alpha channel
                         count++;
                     }
@@ -17123,6 +17142,12 @@ class Bread {
         pot.setNumInstances(count); // grid of "particles"
         return pot;
     }
+    makeBread(fillpath, boundPath, curSlice, pot) {
+        if (this.isProved == false)
+            return this.initialBread(curSlice, pot);
+        else
+            return this.drawBread(fillpath, boundPath, curSlice, pot);
+    }
     calDist(fillpath, boundPath) {
         var offsetsArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["c" /* parseTxt */])(fillpath);
         var boundArray = Object(__WEBPACK_IMPORTED_MODULE_1__globals__["c" /* parseTxt */])(boundPath);
@@ -17195,7 +17220,7 @@ class Bread {
                 }
             }
         }
-        this.rise();
+        //this.rise();
     }
     rise() {
         this.afterRiseArray = [];
@@ -17393,7 +17418,7 @@ module.exports = "#version 300 es\n\nuniform mat4 u_ViewProj;\nuniform float u_T
 /* 78 */
 /***/ (function(module, exports) {
 
-module.exports = "#version 300 es\nprecision highp float;\nprecision mediump sampler3D;\nuniform vec3 u_Eye, u_Ref, u_Up;\nuniform mat4 u_ViewProj;\nuniform float u_Time;\nuniform mat3 u_CameraAxes;\nuniform vec2 u_Dimensions;\nuniform sampler2D u_Texture;\nuniform sampler3D u_3DTexture;\nin vec4 fs_Col;\nin vec4 fs_Pos;\nin vec2 fs_UV;\nin vec4 fs_Nor;\n//in vec4 fs_Rot;\n\nout vec4 out_Col;\n\n\n\nvoid main()\n{\n\n\n\nvec3 lightPos = vec3(-1, 10, 1);\nfloat lambert = dot(vec3(fs_Nor), normalize(lightPos));\nlambert = clamp(lambert, 0.0, 1.0);\nfloat ambient = 0.5;\nfloat lightIntensity = ambient + lambert;\n\nvec4 color1 = vec4(0.7882, 0.4392, 0.0431, 1.0);\nvec4 color2 = vec4(0.9922, 0.8157, 0.4863, 1.0);\n\nvec4 color3 = vec4(0.7059, 0.2863, 0.3922, 1.0);\n\n   // float dist = fs_Col.b;\n   // if(dist > 0.8) dist = 1.0;\n   \n   out_Col = mix(color2, color1, fs_Col.b) * lightIntensity;\n\n   out_Col = vec4(clamp(vec3(out_Col), vec3(0.0), vec3(1.0)), 1.0);\n\n   //out_Col = fs_Col;\n}\n"
+module.exports = "#version 300 es\nprecision highp float;\nprecision mediump sampler3D;\nuniform vec3 u_Eye, u_Ref, u_Up;\nuniform mat4 u_ViewProj;\nuniform float u_Time;\nuniform mat3 u_CameraAxes;\nuniform vec2 u_Dimensions;\nuniform sampler2D u_Texture;\nuniform sampler3D u_3DTexture;\nin vec4 fs_Col;\nin vec4 fs_Pos;\nin vec2 fs_UV;\nin vec4 fs_Nor;\n//in vec4 fs_Rot;\n\nout vec4 out_Col;\n\n\n\n\n\n\nvoid main()\n{\n\n\n\nvec3 lightPos = vec3(-1, 10, 1);\nfloat lambert = dot(vec3(fs_Nor), normalize(lightPos));\nlambert = clamp(lambert, 0.0, 1.0);\nfloat ambient = 0.5;\nfloat lightIntensity = ambient + lambert;\n\nvec4 color1 = vec4(0.7882, 0.4392, 0.0431, 1.0);\nvec4 color2 = vec4(0.9922, 0.8157, 0.4863, 1.0);\n\nvec4 color3 = vec4(0.7059, 0.2863, 0.3922, 1.0);\n\n   // float dist = fs_Col.b;\n   // if(dist > 0.8) dist = 1.0;\n   \n   out_Col = mix(color2, color1, fs_Col.b) * lightIntensity;\n\n   out_Col = vec4(clamp(vec3(out_Col), vec3(0.0), vec3(1.0)), 1.0);\n\n   //out_Col = fs_Col;\n}\n"
 
 /***/ })
 /******/ ]);
